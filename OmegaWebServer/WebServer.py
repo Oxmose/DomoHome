@@ -19,12 +19,9 @@ servApp = Flask(__name__)
 # ROUTES
 ####################################
 
-@servApp.route('/')
-def index():
-    return render_template("index.html", objId=3)
-
+@servApp.route('/', defaults={'objid': 3})
 @servApp.route('/<int:objid>')
-def indexId(objid):
+def indexId(objid=3):
     return render_template("index.html", objId=objid)
 
 

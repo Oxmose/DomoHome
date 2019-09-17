@@ -75,7 +75,8 @@
           <a class="mdl-navigation__link" href="1"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">slow_motion_video</i>PWM</a>
           <a class="mdl-navigation__link" href="2"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">group_work</i>RGB</a>
           <div class="mdl-layout-spacer"></div>
-          <a class="mdl-navigation__link" onclick="showAbout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span>About</span></a>
+          <a class="mdl-navigation__link" href="#" onclick="showSettings()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">settings_applications</i><span>Settings</span></a>
+          <a class="mdl-navigation__link" href="#" onclick="showAbout()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span>About</span></a>
         </nav>
       </div>
       <main class="mdl-layout__content mdl-color--blue-grey-900">
@@ -213,6 +214,31 @@
               <br />
               <br />
           </div>
+          <div id="app_settings" class="mdl-color-text--white">
+              <table class="mdl-data-table mdl-js-data-table mdl-color--blue-grey-700 mdl-shadow--2dp mdl-color-text--white">
+                  <thead class="mdl-color-text--white">
+                    <tr>
+                      <th class="mdl-data-table__cell--non-numeric mdl-color-text--white">Client Name</th>
+                      <th class="mdl-color-text--white">IPv4</th>
+                      <th class="mdl-color-text--white">Port</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="mdl-data-table__cell--non-numeric">TV MCU</td>
+                      <td>888.888.888.888</td>
+                      <td>88888</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br />
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" style="float: right; margin-right: 20px">
+                    <i class="material-icons">add</i>
+                </button>
+                <br />
+                <br />
+                <br />
+          </div>
           
           <div class="mdl-dialog__actions">
             <div id="cancel_save_block">
@@ -254,8 +280,11 @@
       function showPWMDialog(id) {
         document.getElementById("dialog_title").innerHTML = "PWM Settings";
         document.getElementById("dialog_info").innerHTML = "Set the PWM value";
+
         document.getElementById("pwm_settings").style.display = "block";
         document.getElementById("rgb_settings").style.display = "none";
+        document.getElementById("app_settings").style.display = "none";
+
         document.getElementById("cancel_save_block").style.display = "block";
         document.getElementById("close_block").style.display = "none";
 
@@ -268,8 +297,11 @@
       function showRGBDialog(id) {
         document.getElementById("dialog_title").innerHTML = "RGB Settings";
         document.getElementById("dialog_info").innerHTML = "Set the RGB value";
+
         document.getElementById("pwm_settings").style.display = "none";
         document.getElementById("rgb_settings").style.display = "block";
+        document.getElementById("app_settings").style.display = "none";
+
         document.getElementById("cancel_save_block").style.display = "block";
         document.getElementById("close_block").style.display = "none";
 
@@ -280,12 +312,29 @@
       function showAbout() {
         document.getElementById("dialog_title").innerHTML = "About";
         document.getElementById("dialog_info").innerHTML = "<p style=\"text-align:justify\">Domohome &copy; Oxmose 2019<br /><br />Domohome is a domotic application aimed at managing electronic objects in the house.<br /><br /><a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a></p>";
+        
         document.getElementById("pwm_settings").style.display = "none";
         document.getElementById("rgb_settings").style.display = "none";
+        document.getElementById("app_settings").style.display = "none";
+
         document.getElementById("cancel_save_block").style.display = "none";
         document.getElementById("close_block").style.display = "block";
 
         dialog.showModal();  
+      }
+
+      function showSettings() {
+        document.getElementById("dialog_title").innerHTML = "Settings";
+        document.getElementById("dialog_info").innerHTML = "General application settings";
+
+        document.getElementById("pwm_settings").style.display = "none";
+        document.getElementById("rgb_settings").style.display = "none";
+        document.getElementById("app_settings").style.display = "block";
+
+        document.getElementById("cancel_save_block").style.display = "block";
+        document.getElementById("close_block").style.display = "none";
+
+        dialog.showModal(); 
       }
       
     </script>
