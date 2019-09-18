@@ -1,36 +1,35 @@
 #include "CJMCU75.h"
 #include <Wire.h>
+#include <stdint.h>
 
 #define CJMCU75_BASE_ADDR 0x48
 #define CJMCU75_REG_TEMP  0x00
-#define CJMCU75_DEG_RED   0.10f
+#define CJMCU75_DEG_RED   0.125f
 #define CJMCU75_SIGN_BIT  0x0400
 #define CJMCU75_MASK      0xF800
 
-CJMCU75::CJMCU75(const bool A0, const bool A1, const bool A2)
+static uint32_t address;
+
+void CJMCU75_init(const uint8_t A0, const uint8_t A1, const uint8_t A2)
 {
-  this->address = CJMCU75_BASE_ADDR;
+  address = CJMCU75_BASE_ADDR;
   if(A0)
   {
-    this->address += 1;
+    address += 1;
   }
   if(A1)
   {
-    this->address += 2;
+    address += 2;
   }
   if(A2)
   {
-    this->address += 4;
+    address += 4;
   }
 
   Wire.begin(14, 12);
 }
-CJMCU75::~CJMCU75(void)
-{
-  
-}
 
-uint16_t CJMCU75::getRawTemperature(void) const 
+uint16_t CJMCU75_getRawTemperature(void) 
 {
   uint16_t rawTemp;
   uint16_t readValue;
@@ -41,14 +40,14 @@ uint16_t CJMCU75::getRawTemperature(void) const
   rawTemp = UINT32_MAX;
   readValueBuffer = (uint8_t*)&readValue;
   
-  Wire.beginTransmission((int)this->address);
+  Wire.beginTransmission((int)address);
   Wire.write(CJMCU75_REG_TEMP);
 
   if(Wire.endTransmission())
   {
     return rawTemp;
   }
-  if(!Wire.requestFrom((int)this->address, sizeof(uint16_t)))
+  if(!Wire.requestFrom((int)address, sizeof(uint16_t)))
   {
     return rawTemp;
   }
@@ -62,12 +61,12 @@ uint16_t CJMCU75::getRawTemperature(void) const
 	return rawTemp;
 }
 
-float CJMCU75::getDegTemperature(void) const
+float CJMCU75_getDegTemperature(void)
 {
   float degData;
   uint16_t rawData;
   
-  rawData = getRawTemperature();
+  rawData = CJMCU75_getRawTemperature();
 
   if(rawData & CJMCU75_SIGN_BIT)
   {
@@ -83,12 +82,12 @@ float CJMCU75::getDegTemperature(void) const
   return degData;
 }
 
-float CJMCU75::getFarTemperature(void) const
+float CJMCU75_getFarTemperature(void)
 {
   float degData;
   uint16_t rawData;
   
-  rawData = getRawTemperature();
+  rawData = CJMCU75_getRawTemperature();
 
   if(rawData & CJMCU75_SIGN_BIT)
   {

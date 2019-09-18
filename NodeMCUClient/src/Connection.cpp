@@ -11,7 +11,7 @@ static WiFiUDP udpClient;
 void wifiConnect(void)
 {
   Serial.print("\n");
-  Logger::logInfo("Connecting to " NET_SSID);
+  logInfo("Connecting to " NET_SSID);
 
   IPAddress ip(192, 168, 0, 11);
   IPAddress gateway(192, 168, 0, 254);
@@ -27,7 +27,7 @@ void wifiConnect(void)
   }
   Serial.print("\n");
 
-  Logger::logInfo("WiFi connected");
+  logInfo("WiFi connected");
    
   char msg[100];
   char IP[] = "xxx.xxx.xxx.xxx";
@@ -38,7 +38,7 @@ void wifiConnect(void)
   strncat(msg, IP, 16);
   strncat(msg, ":", 1);
   strncat(msg, str, strlen(str));
-  Logger::logInfo(msg);
+  logInfo(msg);
 
   /* Init pseudo connection */
   udpClient.begin(SERVER_PORT);

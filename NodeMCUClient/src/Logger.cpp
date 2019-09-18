@@ -2,12 +2,12 @@
 
 #include "Logger.h"
 
-void Logger::logInit(void) 
+void logInit(void) 
 {
     Serial.begin(9600);
     while(!Serial);
 }
-void Logger::logInfo(const char* msg) 
+void logInfo(const char* msg) 
 {
     Serial.print("[");
     Serial.print(millis());
@@ -17,7 +17,7 @@ void Logger::logInfo(const char* msg)
     Serial.println(msg);
     Serial.flush();
 }
-void Logger::logWarning(const char* msg) 
+void logWarning(const char* msg) 
 {
     Serial.print("[");
     Serial.print(millis());
@@ -27,7 +27,7 @@ void Logger::logWarning(const char* msg)
     Serial.println(msg);
     Serial.flush();
 }
-void Logger::logError(const char* msg) 
+void logError(const char* msg) 
 {
     Serial.print("[");
     Serial.print(millis());

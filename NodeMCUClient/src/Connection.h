@@ -18,4 +18,5 @@ void wifiConnect(void);
 void receivePacket(char* ip, uint32_t* port, char* buffer, const uint32_t size);
 
 void sendPacket(const char* ip, const uint32_t port, const char* buffer, const uint32_t size);
+
 #endif /* __CONNECTION_H_ */

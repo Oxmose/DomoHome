@@ -9,21 +9,11 @@
 #ifndef __CJMCU75_H__
 #define __CJMCU75_H__
 
-#include "Arduino.h"
+#include <stdint.h>
 
-class CJMCU75
-{
-  private:
-    uint32_t address;
-    
-    uint16_t getRawTemperature(void) const;
-    
-  public:
-    CJMCU75(const bool A0, const bool A1, const bool A2);
-    ~CJMCU75(void);
-
-    float getDegTemperature(void) const;
-    float getFarTemperature(void) const;
-};
+void CJMCU75_init(const uint8_t A0, const uint8_t A1, const uint8_t A2);
+uint16_t CJMCU75_getRawTemperature(void);
+float CJMCU75_getDegTemperature(void);
+float CJMCU75_getFarTemperature(void);
 
 #endif /* #ifndef __CJMCU75_H__ */
