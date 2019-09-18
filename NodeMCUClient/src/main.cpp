@@ -80,10 +80,12 @@ void loop() {
   
   uint32_t packetType;
   uint16_t i;
+  char ip[16] = {0};
+  uint32_t port;
   
   bool  packeted = false;
 
-  receivePacket(packet, PACKET_SIZE);
+  receivePacket(ip, &port, packet, PACKET_SIZE);
 
   Logger::logInfo("RECEIVED PACKET");
 
@@ -119,7 +121,7 @@ void loop() {
 
   if(packeted)
   {
-    sendPacket(packet, PACKET_SIZE);;
+    sendPacket(ip, port, packet, PACKET_SIZE);
     Logger::logInfo("SENT PACKET");
   }
 }

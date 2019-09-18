@@ -45,18 +45,20 @@ void wifiConnect(void)
   udpClient.flush();
 }
 
-void receivePacket(char* buffer, const uint32_t size)
+void receivePacket(char* ip, uint32_t* port, char* buffer, const uint32_t size)
 {
   while(!udpClient.parsePacket())
   {
     delay(100);
   }
   udpClient.read(buffer, size);
+  strcpy(ip, udpClient.remoteIP().toString().c_str());
+  *port = udpClient.remotePort();
 }
 
-void sendPacket(const char* buffer, const uint32_t size)
+void sendPacket(const char* ip, const uint32_t port, const char* buffer, const uint32_t size)
 {
-    udpClient.beginPacket(SERVER_IP, SERVER_PORT);
+    udpClient.beginPacket(ip, port);
     udpClient.write(buffer, size);
     udpClient.endPacket();
 }
