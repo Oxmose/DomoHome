@@ -225,7 +225,7 @@
             {% endif %}
         </main>
 
-        <dialog class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white">
+        <dialog id="main_dialog" class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white">
             <h4 id="dialog_title" class="mdl-dialog__title"></h4>
             <div class="mdl-dialog__content mdl-color-text--white">
                 <p id="dialog_info"></p>
@@ -280,13 +280,13 @@
                     <br />
                     <br />
                     <span>Temperature in &nbsp;&nbsp;&nbsp;</span>
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
-                        <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="1" checked>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="temp_unit_c" id="temp_unit_c_label">
+                        <input type="radio" id="temp_unit_c" class="mdl-radio__button" name="options" value="1" checked>
                         <span class="mdl-radio__label">&deg;C</span>
                     </label>
                     &nbsp;&nbsp;&nbsp;
-                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
-                        <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="2">
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="temp_unit_f">
+                        <input type="radio" id="temp_unit_f" class="mdl-radio__button" name="options" value="2">
                         <span class="mdl-radio__label">&deg;F</span>
                     </label>
                     <br />
@@ -298,7 +298,7 @@
                     <button type="button"
                         class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect close">Cancel</button>
                     <button type="button"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">Save</button>
+                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white save">Save</button>
                 </div>
                 <div id="close_block">
                     <button type="button"
@@ -314,89 +314,14 @@
 </body>
 
 <script>
-
-    initUI();
-
-    var dialog = document.querySelector('dialog');
-    var pwmSlider = document.getElementById("pwm_slider_tooltip");
-
-    pwmSlider.innerHTML = document.getElementById("pwm_slider").value;
-
-    var container = document.querySelector('#color-picker')
-    var picker = new CP(container, false, container);
-    picker.fit();
-
-    if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
-    }
-    dialog.querySelector('.close').addEventListener('click', function () {
-        dialog.close();
-        picker.exit();
+    $( document ).ready(function() {
+        var dialog = document.querySelector('dialog');
+        if (!dialog.showModal) {
+            dialogPolyfill.registerDialog(dialog);
+        }
+        
+        initUI();
     });
-    dialog.querySelector('.closeabout').addEventListener('click', function () {
-        dialog.close();
-    });
-
-    function showPWMDialog(id) {
-        document.getElementById("dialog_title").innerHTML = "PWM Settings";
-        document.getElementById("dialog_info").innerHTML = "Set the PWM value";
-
-        document.getElementById("pwm_settings").style.display = "block";
-        document.getElementById("rgb_settings").style.display = "none";
-        document.getElementById("app_settings").style.display = "none";
-
-        document.getElementById("cancel_save_block").style.display = "block";
-        document.getElementById("close_block").style.display = "none";
-
-        dialog.showModal();
-    }
-    function updatePWMSliderTooltip(value) {
-        pwmSlider.innerHTML = value;
-    }
-
-    function showRGBDialog(id) {
-        document.getElementById("dialog_title").innerHTML = "RGB Settings";
-        document.getElementById("dialog_info").innerHTML = "Set the RGB value";
-
-        document.getElementById("pwm_settings").style.display = "none";
-        document.getElementById("rgb_settings").style.display = "block";
-        document.getElementById("app_settings").style.display = "none";
-
-        document.getElementById("cancel_save_block").style.display = "block";
-        document.getElementById("close_block").style.display = "none";
-
-        dialog.showModal();
-        picker.enter();
-    }
-
-    function showAbout() {
-        document.getElementById("dialog_title").innerHTML = "About";
-        document.getElementById("dialog_info").innerHTML = "<p style=\"text-align:justify\">Domohome &copy; Oxmose 2019<br /><br />Domohome is a domotic application aimed at managing electronic objects in the house.<br /><br /><a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a></p>";
-
-        document.getElementById("pwm_settings").style.display = "none";
-        document.getElementById("rgb_settings").style.display = "none";
-        document.getElementById("app_settings").style.display = "none";
-
-        document.getElementById("cancel_save_block").style.display = "none";
-        document.getElementById("close_block").style.display = "block";
-
-        dialog.showModal();
-    }
-
-    function showSettings() {
-        document.getElementById("dialog_title").innerHTML = "Settings";
-        document.getElementById("dialog_info").innerHTML = "General application settings";
-
-        document.getElementById("pwm_settings").style.display = "none";
-        document.getElementById("rgb_settings").style.display = "none";
-        document.getElementById("app_settings").style.display = "block";
-
-        document.getElementById("cancel_save_block").style.display = "block";
-        document.getElementById("close_block").style.display = "none";
-
-        dialog.showModal();
-    }
-
 </script>
 
 </html>

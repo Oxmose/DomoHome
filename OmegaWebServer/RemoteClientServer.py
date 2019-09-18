@@ -9,18 +9,18 @@
 import socket
 import array
 import struct
+import CONSTANTS
 
 ####################################
 # SERVER STATE VARIALBES
 ####################################
 
-
 ####################################
 # PACKETS DEFINITIONS
 ####################################
-TEMPERATURE_REQ_ID = 0x2
 
 PACKET_STRUCT = [0 for i in range(0, 20)]
+
 ####################################
 # SERVER CLASS
 ####################################
@@ -30,12 +30,17 @@ class RemoteClientServer:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.settimeout(0.5)
     
-    def reqTemperature(self, ip, port):
+    def reqTemperature(self, ip, port, unit):
         packet = PACKET_STRUCT
-        packet[0] = TEMPERATURE_REQ_ID
-        while(True):
+        packet[0] = CONSTANTS.TEMPERATURE_REQ_ID
+        if(unit == CONSTANTS.TEMPERATURE_UNIT_C):
+            packet[4] = CONSTANTS.TEMPERATURE_UNIT_C
+        else:
+            packet[4] = CONSTANTS.TEMPERATURE_UNIT_F
+
+        data = 0.0
+        for i in range(0, 5):
             self.sendTo(ip, port, array.array('B',packet))
-            data = 0.0
             try:
                 data = self.socket.recvfrom(20)
                 tempFloat = list(data[0])[4:8]

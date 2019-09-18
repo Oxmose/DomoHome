@@ -15,6 +15,9 @@
 
 #define TEMPERATURE_PACKET_TYPE 0x1
 
+#define REQ_TEMPERATURE_UNIT_C 0x0
+#define REQ_TEMPERATURE_UNIT_F 0x1
+
 #define REQ_TEMPERATURE_TYPE    0x2
 #define REQ_TOGGLE_TYPE         0x3
 #define REQ_SET_PWM_TYPE        0x4

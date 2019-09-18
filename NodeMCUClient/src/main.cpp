@@ -3,10 +3,13 @@
 #include "Connection.h"
 #include "Logger.h"
 
-void sendTemperature(char* packet)
+void sendTemperature(char* packet, uint8_t unit)
 {
   float temp;
-  temp = CJMCU75_getDegTemperature();
+  if(unit == REQ_TEMPERATURE_UNIT_C)
+    temp = CJMCU75_getDegTemperature();
+  else
+    temp = CJMCU75_getFarTemperature();
   char msg[32];
   char str[6];
   strncpy(msg, "REQ Temp: \0", 11);
@@ -92,7 +95,7 @@ void loop() {
   if(packetType == REQ_TEMPERATURE_TYPE)
   {
     logInfo("REQ TEMP");
-    sendTemperature(packet);
+    sendTemperature(packet, ((info_packet_t*)packet)->data[0]);
     packeted = true;
   }
   else if(packetType == REQ_TOGGLE_TYPE)
