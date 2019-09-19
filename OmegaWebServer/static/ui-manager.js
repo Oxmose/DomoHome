@@ -21,6 +21,12 @@ var pwmSliderTooltip   = null;
 var container          = null;
 var picker             = null;
 var dialogTitle        = null;
+var dialogInfo         = null;
+var pwmSettings        = null;
+var rgbSettings        = null;
+var appSettings        = null;
+var cancelSaveBlock    = null;
+var closeBlock         = null;
 
 /* -------------------------------*
  * UI Settings
@@ -62,6 +68,12 @@ function getElements() {
     container        = document.getElementById('color-picker');
     picker           = new CP(container, false, container);
     dialogTitle      = $('#dialog_title');
+    dialogInfo       = $('#dialog_info');
+    pwmSettings      = $('#pwm_settings');
+    rgbSettings      = $('#rgb_settings');
+    appSettings      = $('#app_settings');
+    cancelSaveBlock  = $('#cancel_save_block');
+    closeBlock       = $('#close_block');
 }
 
 function setDialog() {
@@ -133,28 +145,28 @@ function updatePWMSliderTooltip(value) {
 
 function showPWMDialog(id) {
     dialogTitle.html("PWM Settings");
-    document.getElementById("dialog_info").innerHTML = "Set the PWM value";
+    dialogInfo.html("Set the PWM value");
 
-    document.getElementById("pwm_settings").style.display = "block";
-    document.getElementById("rgb_settings").style.display = "none";
-    document.getElementById("app_settings").style.display = "none";
+    pwmSettings.css("display", "block");
+    rgbSettings.css("display", "none");
+    appSettings.css("display", "none");
 
-    document.getElementById("cancel_save_block").style.display = "block";
-    document.getElementById("close_block").style.display = "none";
+    cancelSaveBlock.css("display", "block");
+    closeBlock.css("display", "none");
 
     dialog.showModal();
 }
 
 function showRGBDialog(id) {
     dialogTitle.html("RGB Settings");
-    document.getElementById("dialog_info").innerHTML = "Set the RGB value";
+    dialogInfo.html("Set the RGB value");
 
-    document.getElementById("pwm_settings").style.display = "none";
-    document.getElementById("rgb_settings").style.display = "block";
-    document.getElementById("app_settings").style.display = "none";
+    pwmSettings.css("display", "none");
+    rgbSettings.css("display", "block");
+    appSettings.css("display", "none");
 
-    document.getElementById("cancel_save_block").style.display = "block";
-    document.getElementById("close_block").style.display = "none";
+    cancelSaveBlock.css("display", "block");
+    closeBlock.css("display", "none");
 
     dialog.showModal();
     picker.enter();
@@ -162,28 +174,28 @@ function showRGBDialog(id) {
 
 function showAbout() {
     dialogTitle.html("About");
-    document.getElementById("dialog_info").innerHTML = "<p style=\"text-align:justify\">Domohome &copy; Oxmose 2019<br /><br />Domohome is a domotic application aimed at managing electronic objects in the house.<br /><br /><a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a></p>";
+    dialogInfo.html("<p style=\"text-align:justify\">Domohome &copy; Oxmose 2019<br /><br />Domohome is a domotic application aimed at managing electronic objects in the house.<br /><br /><a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a></p>");
 
-    document.getElementById("pwm_settings").style.display = "none";
-    document.getElementById("rgb_settings").style.display = "none";
-    document.getElementById("app_settings").style.display = "none";
+    pwmSettings.css("display", "none");
+    rgbSettings.css("display", "none");
+    appSettings.css("display", "none");
 
-    document.getElementById("cancel_save_block").style.display = "none";
-    document.getElementById("close_block").style.display = "block";
+    cancelSaveBlock.css("display", "none");
+    closeBlock.css("display", "block");
 
     dialog.showModal();
 }
 
 function showSettings() {
     dialogTitle.html("Settings");
-    document.getElementById("dialog_info").innerHTML = "General application settings";
+    dialogInfo.html("General application settings");
 
-    document.getElementById("pwm_settings").style.display = "none";
-    document.getElementById("rgb_settings").style.display = "none";
-    document.getElementById("app_settings").style.display = "block";
+    pwmSettings.css("display", "none");
+    rgbSettings.css("display", "none");
+    appSettings.css("display", "block");
 
-    document.getElementById("cancel_save_block").style.display = "block";
-    document.getElementById("close_block").style.display = "none";
+    cancelSaveBlock.css("display", "block");
+    closeBlock.css("display", "none");
 
     console.log(settings);
     if(settings.tempUnit == 0) {
