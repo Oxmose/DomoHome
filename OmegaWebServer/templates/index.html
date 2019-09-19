@@ -236,9 +236,6 @@
                             oninput="updatePWMSliderTooltip(this.value)" id="pwm_slider" min="0" max="100" value="0"
                             step="1">
                     </p>
-                    <div class="mdl-tooltip" id="pwm_slider_tooltip" data-mdl-for="pwm_slider">
-                        value
-                    </div>
                     <br />
                 </div>
                 <div id="rgb_settings" class="mdl-color-text--white">
@@ -253,32 +250,8 @@
                     <br />
                     <br />
                 </div>
-                <div id="app_settings" class="mdl-color-text--white">
-                    <table
-                        class="mdl-data-table mdl-js-data-table mdl-color--blue-grey-700 mdl-shadow--2dp mdl-color-text--white">
-                        <thead class="mdl-color-text--white">
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric mdl-color-text--white">Client Name</th>
-                                <th class="mdl-color-text--white">IPv4</th>
-                                <th class="mdl-color-text--white">Port</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="mdl-data-table__cell--non-numeric">TV MCU</td>
-                                <td>888.888.888.888</td>
-                                <td>88888</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br />
-                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored"
-                        style="float: right; margin-right: 20px">
-                        <i class="material-icons">add</i>
-                    </button>
-                    <br />
-                    <br />
-                    <br />
+                <div id="app_settings" class="mdl-color-text--white">                   
+                   
                     <span>Temperature in &nbsp;&nbsp;&nbsp;</span>
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="temp_unit_c" id="temp_unit_c_label">
                         <input type="radio" id="temp_unit_c" class="mdl-radio__button" name="options" value="1" checked>

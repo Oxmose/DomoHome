@@ -17,7 +17,10 @@ from RemoteClientServer import RemoteClientServer
 # SERVER STATE VARIALBES
 ####################################
 serverSettings = {'tempUnit': CONSTANTS.TEMPERATURE_UNIT_C}
-remoteClients = []
+
+remoteClients = {}
+linkedObj     = {}
+
 remoteClientServer = RemoteClientServer()
 
 
@@ -47,8 +50,8 @@ def getSettings():
 @servApp.route('/getTemp')
 def getTemp():
     readTemp = 0.0
-    for client in remoteClients:
-        if(client['temp'] == True):
+    for client in remoteClients.values():
+        if(client['tempSensor'] == True):
             readTemp = remoteClientServer.reqTemperature(client['ip'], client['port'], serverSettings['tempUnit'])
             break
         
@@ -71,20 +74,30 @@ def setTempUnit(unit):
 # INTERNAL
 ####################################
 
-def loadRemoteClients():
+def loadObjects():
+    global linkedObj
     global remoteClients
     try:
-        f = open('rc_data.pak', encoding='utf-8')
-        remoteClients = json.loads(f.read())
-    except:     
-        pass
+        f = open('objects.json', encoding='utf-8')
+        objects = json.loads(f.read())
+        for obj in objects:
+            if(obj['type'] == 0 or obj['type'] == 1 or obj['type'] == 2):
+                linkedObj[obj['id']] = {'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio']}
+            elif(obj['type'] == 3 or obj['type'] == 4):
+                linkedObj[obj['id']] = {'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
+            elif(obj['type'] == 5):
+                remoteClients[obj['id']] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
+            else:
+                print("Unkonwn object type " + str(obj['type']))
 
-def saveRemoteClients():
-    global remoteClients
-    try:
-        f = open('rc_data.pak', 'w')
-        json.dump(remoteClients, f)
-    except:     
+        print(linkedObj)
+        print(remoteClients)
+    except ValueError as e:
+        print("ERROR " + e)
+    except IOError as e:
+        print("ERROR " + e.strerror)
+    except Exception as e:     
+        print("ERROR While reading object file " + str(e))
         pass
 
 def loadSettings():
@@ -108,8 +121,7 @@ def saveSettings():
 ####################################
 if __name__ == '__main__': 
     print("Loading data...")
-    loadRemoteClients()
-    saveRemoteClients()
+    loadObjects()
     loadSettings()
     saveSettings()
     print("#============================#")

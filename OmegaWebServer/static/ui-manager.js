@@ -17,7 +17,6 @@ var tempUnitCRadio     = null;
 var tempUnitFRadio     = null;
 var dialogSaveButton   = null;
 var dialog             = null;
-var pwmSliderTooltip   = null;
 var container          = null;
 var picker             = null;
 var dialogTitle        = null;
@@ -64,7 +63,6 @@ function getElements() {
     tempUnitCRadio   = $('#temp_unit_c_label');
     tempUnitFRadio   = $('#temp_unit_f_label');
     dialogSaveButton = $('#dialog_save_button');    
-    pwmSliderTooltip = $('#pwm_slider_tooltip');
     container        = document.getElementById('color-picker');
     picker           = new CP(container, false, container);
     dialogTitle      = $('#dialog_title');
@@ -85,7 +83,6 @@ function setDialog() {
         dialog.close();
     });
 }
-
 
 /* -------------------------------*
  * UI Updater
@@ -137,12 +134,7 @@ function updateTemp(){
         }
     });
 }
-
-function updatePWMSliderTooltip(value) {
-    pwmSlider.html("" + value);
-}
-        
-
+      
 function showPWMDialog(id) {
     dialogTitle.html("PWM Settings");
     dialogInfo.html("Set the PWM value");
@@ -197,7 +189,6 @@ function showSettings() {
     cancelSaveBlock.css("display", "block");
     closeBlock.css("display", "none");
 
-    console.log(settings);
     if(settings.tempUnit == 0) {
         tempUnitCRadio.addClass('is-checked');
         tempUnitFRadio.removeClass('is-checked');
@@ -209,10 +200,12 @@ function showSettings() {
     dialog.querySelector('.save').addEventListener('click', function() {
         $.ajax({ 
             url: "/setTempUnit/".concat(tempUnitCRadio.hasClass('is-checked') ? "0" : "1")
-        }).then(function() {
+        }).then(function(data) {
             dialog.close();
             updateTemp();
         });
+
+        getSettings();
     });
 
     dialog.showModal();
