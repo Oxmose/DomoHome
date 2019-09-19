@@ -37,6 +37,12 @@ def indexId(objid=3):
 # REST API
 ####################################
 
+''' Set the server settings '''
+@servApp.route('/getSettings')
+def getSettings():
+    global serverSettings
+    return jsonify(error=0, settings=serverSettings)
+
 ''' Get the current temperature '''
 @servApp.route('/getTemp')
 def getTemp():
