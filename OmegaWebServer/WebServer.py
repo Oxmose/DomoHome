@@ -7,6 +7,7 @@
 
 import json
 import CONSTANTS
+import os
 
 from flask     import Flask, request, render_template, jsonify
 from flask_api import status
@@ -76,6 +77,21 @@ def setTempUnit(unit):
     saveSettings()
     return jsonify(error=0)
 
+''' Reboot '''
+@servApp.route('/reboot')
+def reboot():
+    rebootServer()
+    return jsonify(error=0)
+
+''' Toggle object '''
+@servApp.route('/toggle/<id>')
+def toggle(id):
+    if(not str(id) in linkedObj):
+        return jsonify(error=1)
+    linkedObj[id]['state'] = not linkedObj[id]['state']
+    print("OK")
+    updateObject(id)
+    return jsonify(error=0)
 ####################################
 # INTERNAL
 ####################################
@@ -83,28 +99,71 @@ def setTempUnit(unit):
 def loadObjects():
     global linkedObj
     global remoteClients
+
+    remoteClients.clear()
+    linkedObj.clear()
     try:
         f = open('objects.json', encoding='utf-8')
         objects = json.loads(f.read())
-        for obj in objects:
+        for key in objects:
+            if(key in linkedObj or key in remoteClients):
+                print("Duplicate object id " + str(key))
+                exit(-1)
+
+            obj = objects[key]
+
             if(obj['type'] == 0 or obj['type'] == 1 or obj['type'] == 2):
-                linkedObj[obj['id']] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio']}
+                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio']}
             elif(obj['type'] == 3 or obj['type'] == 4):
-                linkedObj[obj['id']] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
+                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
             elif(obj['type'] == 5):
-                remoteClients[obj['id']] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
+                remoteClients[key] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
             else:
                 print("Unkonwn object type " + str(obj['type']))
 
-        print(linkedObj)
-        print(remoteClients)
+        print("Loaded " + str(len(linkedObj)) + " objects")
+        print("Loaded " + str(len(remoteClients)) + " remote client")
     except ValueError as e:
         print("ERROR " + e)
+        exit(-1)
     except IOError as e:
         print("ERROR " + e.strerror)
+        exit(-1)
     except Exception as e:     
         print("ERROR While reading object file " + str(e))
-        pass
+        exit(-1)
+
+def updateObject(id):
+    try:
+        f = open('objects.json', 'r', encoding='utf-8')
+        objects = json.loads(f.read())
+        currObj = linkedObj[id]
+
+        objects[id]['type'] = currObj['type']
+        objects[id]['name'] = currObj['name']
+        objects[id]['lastState'] = currObj['state']
+        objects[id]['value'] = currObj['value']
+        objects[id]['gpio'] = currObj['gpio']
+        if('remoteClient' in currObj):
+            objects[id]['remoteClientId'] = currObj['remoteClient']
+
+        f2 = open('objects.json_tmp', 'w', encoding='utf-8')
+        json.dump(objects, f2)
+
+        f.close()
+        f2.close()
+        os.remove('objects.json')
+        os.rename('objects.json_tmp', 'objects.json')
+
+    except ValueError as e:
+        print("ERROR " + str(e))
+        exit(-1)
+    except IOError as e:
+        print("ERROR " + e.strerror)
+        exit(-1)
+    except Exception as e:     
+        print("ERROR While reading object file " + str(e))
+        exit(-1)
 
 def loadSettings():
     global serverSettings
@@ -125,12 +184,18 @@ def saveSettings():
 ####################################
 # MAIN
 ####################################
-if __name__ == '__main__': 
+
+def rebootServer():
     print("Loading data...")
     loadObjects()
     loadSettings()
     saveSettings()
+    
+
+if __name__ == '__main__': 
+    rebootServer()
     print("#============================#")
     print("|    Starting the server     |")
     print("#============================#")
     servApp.run(debug=True, host='0.0.0.0')
+    

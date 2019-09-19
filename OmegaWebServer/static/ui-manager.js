@@ -7,9 +7,10 @@
  *------------------------------*/
 var tempRefreshRate  = 10000;
 var settings         = null;
-var switches         = [];
-var pwm              = [];
-var rgb              = [];
+var switches         = {};
+var pwm              = {};
+var rgb              = {};
+var objTypes         = {};
 
 /* -------------------------------*
  * UI Elements
@@ -63,14 +64,18 @@ function getObjects() {
             objects = data.objects;
             for(var key in objects) {
                 if(objects[key].type == 0) {
-                    switches.push({id: key, name: objects[key].name, state: objects[key].state});
+                    switches[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};                    
                 }
                 else if(objects[key].type == 1 || objects[key].type == 3) {
-                    pwm.push({id: key, name: objects[key].name, state: objects[key].state});
+                    pwm[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};
                 }
                 else if(objects[key].type == 2 || objects[key].type == 4) {
-                    rgb.push({id: key, name: objects[key].name, state: objects[key].state});
+                    rgb[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};
                 }
+
             }
         }
         else {
@@ -176,6 +181,8 @@ function showPWMDialog(id) {
     cancelSaveBlock.css("display", "block");
     closeBlock.css("display", "none");
 
+    document.querySelector('#pwm_slider').MaterialSlider.change(pwm[id].state);
+
     dialog.showModal();
 }
 
@@ -191,6 +198,7 @@ function showRGBDialog(id) {
     closeBlock.css("display", "none");
 
     dialog.showModal();
+    picker.set('rgb(' + rgb[id].state[0] + ', ' + rgb[id].state[1] + ', ' + rgb[id].state[2] + ')')
     picker.enter();
 }
 
@@ -244,12 +252,17 @@ function showSettings() {
 function updateObjects() {
     if(switches.length != 0) {
         list = $('#switches_block_list');
-        for(let i = 0; i < switches.length; ++i) {
+        for (var key in switches) {
             item = $('<li>')
-            item.html('<label for="' + switches[i].id + '_sw_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
-                            <input type="checkbox" id="' + switches[i].id + '_sw_chkbox" class="mdl-checkbox__input"> \
-                            <span class="mdl-checkbox__label">' + switches[i].name + '</span> \
+            label = $('<label for="' + key + '_sw_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" onchange="toggle(' + key + ', this)" > \
+                            <span class="mdl-checkbox__label">' + switches[key].name + '</span> \
                         </label>');
+            chk = $('<input type="checkbox" id="' + key + '_sw_chkbox" class="mdl-checkbox__input">');
+            if(switches[key].state) {
+                chk.attr('checked', 'true');
+            }
+            label.append(chk);
+            item.append(label)
             list.append(item);
         }
         if(switches.length == 1) {
@@ -262,17 +275,22 @@ function updateObjects() {
 
     if(pwm.length != 0) {
         list = $('#pwm_block_list');
-        for(let i = 0; i < pwm.length; ++i) {
+        for (var key in pwm) {
             item = $('<li>')
-            item.html('<label for="' + pwm[i].id + '_pwm_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
-                            <button onclick="showPWMDialog(' + pwm[i].id + ')" \
+            label = $('<label for="' + key + '_pwm_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" onchange="toggle(' + key + ', this)"> \
+                            <button onclick="showPWMDialog(' + key + ')" \
                                 class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" \
                                 style="margin-top: -5px;"> \
                                 <i class="material-icons">settings_applications</i> \
                             </button>&nbsp;&nbsp;&nbsp; \
-                            <input type="checkbox" id="' + pwm[i].id + '_pwm_chkbox" class="mdl-checkbox__input"> \
-                            <span class="mdl-checkbox__label">' + pwm[i].name + '</span> \
+                            <span class="mdl-checkbox__label">' + pwm[key].name + '</span> \
                         </label>');
+            chk = $('<input type="checkbox" id="' + key + '_pwm_chkbox" class="mdl-checkbox__input">');
+            if(pwm[key].state) {
+                chk.attr('checked', 'true');
+            }
+            label.append(chk);
+            item.append(label)
             list.append(item);
         }
         if(pwm.length == 1) {
@@ -285,17 +303,22 @@ function updateObjects() {
 
     if(rgb.length != 0) {
         list = $('#rgb_block_list');
-        for(let i = 0; i < rgb.length; ++i) {
+        for (var key in rgb) {
             item = $('<li>')
-            item.html('<label for="' + rgb[i].id + '_rgb_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
-                            <button onclick="showRGBDialog(' + rgb[i].id + ')" \
+            label = $('<label for="' + key + '_rgb_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" onchange="toggle(' + key + ', this)"> \
+                            <button onclick="showRGBDialog(' + key + ')" \
                                 class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" \
                                 style="margin-top: -5px;"> \
                                 <i class="material-icons">settings_applications</i> \
                             </button>&nbsp;&nbsp;&nbsp; \
-                            <input type="checkbox" id="' + rgb[i].id + '_rgb_chkbox" class="mdl-checkbox__input"> \
-                            <span class="mdl-checkbox__label">' + rgb[i].name + '</span> \
+                            <span class="mdl-checkbox__label">' + rgb[key].name + '</span> \
                         </label>');
+            chk = $('<input type="checkbox" id="' + key + '_rgb_chkbox" class="mdl-checkbox__input">');
+            if(rgb[key].state) {
+                chk.attr('checked', 'true');
+            }
+            label.append(chk);
+            item.append(label)
             list.append(item);
         }
         if(rgb.length == 1) {
@@ -307,4 +330,43 @@ function updateObjects() {
     }
 
 
+}
+
+
+/* -------------------------------*
+ * Server Settings
+ *------------------------------*/
+function rebootServer() {
+    $.ajax({ 
+        url: "/reboot"
+    }).then(function() {
+        location.reload();
+    });
+}
+
+/* -------------------------------*
+ * Server Queries
+ *------------------------------*/
+function toggle(id, box) {
+    $.ajax({ 
+        url: "/toggle/" + id
+    }).then(function(data) {
+        if(data.error != 0) {
+            if($(box).hasClass('is-checked'))
+                box.MaterialCheckbox.uncheck();
+            else 
+                box.MaterialCheckbox.check();  
+        }
+        else {
+            if(objTypes[id].type == 0) {
+                switches[id].state = !switches[id].state;
+            }
+            else if(objTypes[id].type == 1 || objTypes[id].type == 3) {
+                pwm[id].state = !pwm[id].state;
+            }
+            else if(objTypes[id].type == 2 || objTypes[id].type == 4) {
+                rgb[id].state = !rgb[id].state;
+            }
+        }
+    });
 }
