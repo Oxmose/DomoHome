@@ -46,6 +46,12 @@ def getSettings():
     global serverSettings
     return jsonify(error=0, settings=serverSettings)
 
+''' Set the server object '''
+@servApp.route('/getObjects')
+def getObjects():
+    global linkedObj
+    return jsonify(error=0, objects=linkedObj)
+
 ''' Get the current temperature '''
 @servApp.route('/getTemp')
 def getTemp():
@@ -82,9 +88,9 @@ def loadObjects():
         objects = json.loads(f.read())
         for obj in objects:
             if(obj['type'] == 0 or obj['type'] == 1 or obj['type'] == 2):
-                linkedObj[obj['id']] = {'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio']}
+                linkedObj[obj['id']] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio']}
             elif(obj['type'] == 3 or obj['type'] == 4):
-                linkedObj[obj['id']] = {'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
+                linkedObj[obj['id']] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
             elif(obj['type'] == 5):
                 remoteClients[obj['id']] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
             else:

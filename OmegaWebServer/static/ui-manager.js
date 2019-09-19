@@ -7,6 +7,9 @@
  *------------------------------*/
 var tempRefreshRate  = 10000;
 var settings         = null;
+var switches         = [];
+var pwm              = [];
+var rgb              = [];
 
 /* -------------------------------*
  * UI Elements
@@ -32,6 +35,7 @@ var closeBlock         = null;
  *------------------------------*/
 function initUI() {
     getSettings();
+    getObjects();
     getElements();
 
     setDialog();
@@ -48,6 +52,32 @@ function getSettings() {
         else {
             getSettings();
         }
+    });
+}
+
+function getObjects() {
+    $.ajax({ 
+        url: "/getObjects"
+    }).then(function(data) {
+        if(data.error == 0) {
+            objects = data.objects;
+            for(var key in objects) {
+                if(objects[key].type == 0) {
+                    switches.push({id: key, name: objects[key].name, state: objects[key].state});
+                }
+                else if(objects[key].type == 1 || objects[key].type == 3) {
+                    pwm.push({id: key, name: objects[key].name, state: objects[key].state});
+                }
+                else if(objects[key].type == 2 || objects[key].type == 4) {
+                    rgb.push({id: key, name: objects[key].name, state: objects[key].state});
+                }
+            }
+        }
+        else {
+            getObjects();
+        }
+
+        updateObjects();
     });
 }
 
@@ -209,4 +239,72 @@ function showSettings() {
     });
 
     dialog.showModal();
+}
+
+function updateObjects() {
+    if(switches.length != 0) {
+        list = $('#switches_block_list');
+        for(let i = 0; i < switches.length; ++i) {
+            item = $('<li>')
+            item.html('<label for="' + switches[i].id + '_sw_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
+                            <input type="checkbox" id="' + switches[i].id + '_sw_chkbox" class="mdl-checkbox__input"> \
+                            <span class="mdl-checkbox__label">' + switches[i].name + '</span> \
+                        </label>');
+            list.append(item);
+        }
+        if(switches.length == 1) {
+            $('#switches_block_container').append("<br />");
+        }
+    }
+    else {
+        $('#switches_block').hide();
+    }
+
+    if(pwm.length != 0) {
+        list = $('#pwm_block_list');
+        for(let i = 0; i < pwm.length; ++i) {
+            item = $('<li>')
+            item.html('<label for="' + pwm[i].id + '_pwm_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
+                            <button onclick="showPWMDialog(' + pwm[i].id + ')" \
+                                class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" \
+                                style="margin-top: -5px;"> \
+                                <i class="material-icons">settings_applications</i> \
+                            </button>&nbsp;&nbsp;&nbsp; \
+                            <input type="checkbox" id="' + pwm[i].id + '_pwm_chkbox" class="mdl-checkbox__input"> \
+                            <span class="mdl-checkbox__label">' + pwm[i].name + '</span> \
+                        </label>');
+            list.append(item);
+        }
+        if(pwm.length == 1) {
+            $('#pwm_block_container').append("<br />");
+        }
+    }
+    else {
+        $('#pwm_block').hide();
+    }
+
+    if(rgb.length != 0) {
+        list = $('#rgb_block_list');
+        for(let i = 0; i < rgb.length; ++i) {
+            item = $('<li>')
+            item.html('<label for="' + rgb[i].id + '_rgb_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"> \
+                            <button onclick="showRGBDialog(' + rgb[i].id + ')" \
+                                class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" \
+                                style="margin-top: -5px;"> \
+                                <i class="material-icons">settings_applications</i> \
+                            </button>&nbsp;&nbsp;&nbsp; \
+                            <input type="checkbox" id="' + rgb[i].id + '_rgb_chkbox" class="mdl-checkbox__input"> \
+                            <span class="mdl-checkbox__label">' + rgb[i].name + '</span> \
+                        </label>');
+            list.append(item);
+        }
+        if(rgb.length == 1) {
+            $('#rgb_block_container').append("<br />");
+        }
+    }
+    else {
+        $('#rgb_block').hide();
+    }
+
+
 }

@@ -95,20 +95,13 @@
 
             {% if objId == 0 or objId == 3 %}
             <!-- Switches -->
-            <div
+            <div id="switches_block"
                 class="demo-options mdl-card mdl-color--deep-purple-600 mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50">
+                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50" id="switches_block_container">
                     <h3>Switches</h3>
                     <br />
-                    <ul>
-                        <li>
-                            <label for="sofa_light_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <input type="checkbox" id="sofa_light_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Sofa light</span>
-                            </label>
-                        </li>
+                    <ul id="switches_block_list">
                     </ul>
-                    <br />
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
                     <a target="_blank" id="switches_all_off"
@@ -124,34 +117,12 @@
 
             {% if objId == 1 or objId == 3 %}
             <!-- PWMs -->
-            <div
+            <div id="pwm_block"
                 class="demo-options mdl-card mdl-color--deep-purple-700 mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50">
+                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50" id="pwm_block_container">
                     <h3>PWM Objects</h3>
                     <br />
-                    <ul>
-                        <li>
-                            <label for="sofa_leds_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <button onclick="showPWMDialog(0)"
-                                    class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-                                    style="margin-top: -5px;">
-                                    <i class="material-icons">settings_applications</i>
-                                </button>&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="sofa_leds_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Sofa LEDS</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label for="tv_desk_leds_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <button onclick="showPWMDialog(1)"
-                                    class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-                                    style="margin-top: -5px;">
-                                    <i class="material-icons">settings_applications</i>
-                                </button>&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="tv_desk_leds_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">TV Desk LEDS</span>
-                            </label>
-                        </li>
+                    <ul id="pwm_block_list">                        
                     </ul>
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
@@ -168,47 +139,14 @@
 
             {% if objId == 2 or objId == 3 %}
             <!-- RGBs -->
-            <div
+            <div id="rgb_block"
                 class="demo-options mdl-card mdl-color--deep-purple-800 mdl-shadow--2dp mdl-cell mdl-cell--4-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50">
+                <div class="mdl-card__supporting-text mdl-color-text--blue-grey-50" id="rgb_block_container">
                     <h3>RGB Objects</h3>
                     <br />
 
-                    <ul>
-                        <li>
-                            <label for="window_leds_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <button onclick="showRGBDialog(0)"
-                                    class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-                                    style="margin-top: -5px;">
-                                    <i class="material-icons">settings_applications</i>
-                                </button>&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="window_leds_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Window LEDS</span>
-                            </label>
-                        </li>
-                        <li>
-                            <label for="entrance_leds_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <button onclick="showRGBDialog(1)"
-                                    class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-                                    style="margin-top: -5px;">
-                                    <i class="material-icons">settings_applications</i>
-                                </button>&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="entrance_leds_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Entrance LEDS</span>
-                            </label>
-                        </li>
-
-                        <li>
-                            <label for="tv_leds_chkbox" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                                <button onclick="showRGBDialog(2)"
-                                    class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
-                                    style="margin-top: -5px;">
-                                    <i class="material-icons">settings_applications</i>
-                                </button>&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" id="tv_leds_chkbox" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">TV LEDS</span>
-                            </label>
-                        </li>
+                    <ul id="rgb_block_list">
+                        
                     </ul>
                 </div>
                 <div class="mdl-card__actions mdl-card--border">
