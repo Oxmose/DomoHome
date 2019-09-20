@@ -13,6 +13,7 @@ from flask     import Flask, request, render_template, jsonify
 from flask_api import status
 
 from RemoteClientServer import RemoteClientServer
+from ObjectManager import ObjectManager
 
 ####################################
 # SERVER STATE VARIALBES
@@ -24,6 +25,7 @@ linkedObj     = {}
 
 remoteClientServer = RemoteClientServer()
 
+objManager = ObjectManager()
 
 # We have to keep the Flask servAPP as global var
 servApp = Flask(__name__)
@@ -89,9 +91,13 @@ def toggle(id):
     if(not str(id) in linkedObj):
         return jsonify(error=1)
     linkedObj[id]['state'] = not linkedObj[id]['state']
-    print("OK")
-    updateObject(id)
+    if(updateObject(id) != 0):
+        linkedObj[id]['state'] = not linkedObj[id]['state']
+        return jsonify(error=1)
+
+    objManager.toggle(linkedObj[id])
     return jsonify(error=0)
+    
 ####################################
 # INTERNAL
 ####################################
@@ -112,11 +118,11 @@ def loadObjects():
 
             obj = objects[key]
 
-            if(obj['type'] == 0 or obj['type'] == 1 or obj['type'] == 2):
+            if(obj['type'] == CONSTANTS.OBJ_TYPE_SWITCH or obj['type'] == CONSTANTS.OBJ_TYPE_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_RGB):
                 linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio']}
-            elif(obj['type'] == 3 or obj['type'] == 4):
+            elif(obj['type'] == CONSTANTS.OBJ_TYPE_REM_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
                 linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
-            elif(obj['type'] == 5):
+            elif(obj['type'] == CONSTANTS.OBJ_TYPE_REMOTE):
                 remoteClients[key] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
             else:
                 print("Unkonwn object type " + str(obj['type']))
@@ -155,15 +161,16 @@ def updateObject(id):
         os.remove('objects.json')
         os.rename('objects.json_tmp', 'objects.json')
 
+        return 0
     except ValueError as e:
         print("ERROR " + str(e))
-        exit(-1)
+        return 1
     except IOError as e:
         print("ERROR " + e.strerror)
-        exit(-1)
+        return 1
     except Exception as e:     
         print("ERROR While reading object file " + str(e))
-        exit(-1)
+        return 1
 
 def loadSettings():
     global serverSettings
