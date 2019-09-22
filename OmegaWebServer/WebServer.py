@@ -13,7 +13,6 @@ from flask     import Flask, request, render_template, jsonify
 from flask_api import status
 
 from RemoteClientServer import RemoteClientServer
-from ObjectManager import ObjectManager
 
 ####################################
 # SERVER STATE VARIALBES
@@ -24,8 +23,6 @@ remoteClients = {}
 linkedObj     = {}
 
 remoteClientServer = RemoteClientServer()
-
-objManager = ObjectManager()
 
 # We have to keep the Flask servAPP as global var
 servApp = Flask(__name__)
@@ -84,20 +81,56 @@ def setTempUnit(unit):
 def reboot():
     rebootServer()
     return jsonify(error=0)
-
+    
 ''' Toggle object '''
-@servApp.route('/toggle/<id>')
+@servApp.route('/toggle/<id>/')
 def toggle(id):
     if(not str(id) in linkedObj):
         return jsonify(error=1)
+ 
     linkedObj[id]['state'] = not linkedObj[id]['state']
     if(updateObject(id) != 0):
         linkedObj[id]['state'] = not linkedObj[id]['state']
-        return jsonify(error=1)
+        return jsonify(error=2)
 
-    objManager.toggle(linkedObj[id])
-    return jsonify(error=0)
-    
+    if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_SWITCH):
+        pass
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
+        pass 
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_RGB):
+        pass
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_PWM):
+        return setPWM(id, linkedObj[id]['value'])
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
+        pass
+    else:
+        return jsonify(error=3)
+
+''' Set PWM object '''
+@servApp.route('/pwm/<id>/<int:value>')
+def setPWM(id, value):
+    if(not str(id) in linkedObj):
+        return jsonify(error=1)
+    if(value < 0 or value > 255):
+        return jsonify(error=2)
+ 
+    oldValue = linkedObj[id]['value']
+    linkedObj[id]['value'] = value
+    if(updateObject(id) != 0):
+        linkedObj[id]['value'] = oldValue
+        return jsonify(error=3)
+
+    # Check if remote
+    if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_PWM):
+        if(not linkedObj[id]['remoteClient'] in remoteClients):
+            return jsonify(error=4)
+        return jsonify(error=remoteClientServer.setRemotePWM(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
+        pass 
+    else:
+        return jsonify(error=5)
+
+    return jsonify(error=6)
 ####################################
 # INTERNAL
 ####################################

@@ -102,11 +102,15 @@ void loop() {
   {
     logInfo("REQ TOGGLE");
     toggleGPIO(((toggle_packet_t*)packet)->gpio, ((toggle_packet_t*)packet)->state != 0);
+    
   }
   else if(packetType == REQ_SET_PWM_TYPE)
   {
     logInfo("REQ PWM");
     setPwm(((pwm_packet_t*)packet)->gpio, ((pwm_packet_t*)packet)->value);
+    packet[0] = RESPONSE_PACKET_TYPE;
+    packet[1] = 0;
+    packeted = true;
   }
   else
   {
@@ -117,6 +121,7 @@ void loop() {
   for(i = 0; i < PACKET_SIZE; ++i)
   {
     Serial.print((int)packet[i]);
+    Serial.print(" | ");
   }
   Serial.println("");
 #endif

@@ -179,9 +179,14 @@ function showPWMDialog(id) {
     appSettings.css("display", "none");
 
     cancelSaveBlock.css("display", "block");
+
     closeBlock.css("display", "none");
 
-    document.querySelector('#pwm_slider').MaterialSlider.change(pwm[id].state);
+    document.querySelector('#pwm_slider').MaterialSlider.change(pwm[id].value);
+
+    dialog.querySelector('.save').addEventListener('click', function() {
+        setPWM(id);
+    });
 
     dialog.showModal();
 }
@@ -265,7 +270,7 @@ function updateObjects() {
             item.append(label)
             list.append(item);
         }
-        if(switches.length == 1) {
+        if(Object.keys(switches).length == 1) {
             $('#switches_block_container').append("<br />");
         }
     }
@@ -293,7 +298,7 @@ function updateObjects() {
             item.append(label)
             list.append(item);
         }
-        if(pwm.length == 1) {
+        if(Object.keys(pwm).length == 1) {
             $('#pwm_block_container').append("<br />");
         }
     }
@@ -321,7 +326,7 @@ function updateObjects() {
             item.append(label)
             list.append(item);
         }
-        if(rgb.length == 1) {
+        if(Object.keys(rgb).length == 1) {
             $('#rgb_block_container').append("<br />");
         }
     }
@@ -369,4 +374,16 @@ function toggle(id, box) {
             }
         }
     });
+}
+
+function setPWM(id) {
+    $.ajax({ 
+        url: "/pwm/".concat(id).concat("/").concat(document.querySelector('#pwm_slider').MaterialSlider.element_.value),
+        
+    }).then(function(data) {
+        if(data.error == 0)
+            pwm[id].value = document.querySelector('#pwm_slider').MaterialSlider.element_.value;
+
+        dialog.close(); 
+    });           
 }

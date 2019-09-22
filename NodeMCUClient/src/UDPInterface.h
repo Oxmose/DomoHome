@@ -14,6 +14,7 @@
 #include <WiFiUdp.h>
 
 #define TEMPERATURE_PACKET_TYPE 0x1
+#define RESPONSE_PACKET_TYPE    0x2
 
 #define REQ_TEMPERATURE_UNIT_C 0x0
 #define REQ_TEMPERATURE_UNIT_F 0x1

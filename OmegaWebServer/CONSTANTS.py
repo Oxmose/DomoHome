@@ -1,9 +1,13 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
 
+RESPONSE_PACKET_TYPE = 0x2
+
 TEMPERATURE_REQ_ID = 0x2
 TEMPERATURE_UNIT_C = 0
 TEMPERATURE_UNIT_F = 1
+
+PWM_REQ_ID = 0x4
 
 # Types contsants
 OBJ_TYPE_SWITCH  = 0
