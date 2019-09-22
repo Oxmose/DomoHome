@@ -96,13 +96,13 @@ def toggle(id):
     if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_SWITCH):
         pass
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
-        pass 
+        return setPWM(id, linkedObj[id]['value']) 
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_RGB):
-        pass
+        return setRGB(id, (linkedObj[id]['value'][0] << 16) | (linkedObj[id]['value'][1] << 8) | linkedObj[id]['value'][2])
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_PWM):
         return setPWM(id, linkedObj[id]['value'])
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
-        pass
+        return setRGB(id, (linkedObj[id]['value'][0] << 16) | (linkedObj[id]['value'][1] << 8) | linkedObj[id]['value'][2])
     else:
         return jsonify(error=3)
 
@@ -116,25 +116,27 @@ def setPWM(id, value):
     if(value < 0 or value > 255):
         return jsonify(error=2)
  
-    # TODO Check for PWM
+    if(linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_PWM and 
+       linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_REM_PWM):
+        return jsonify(error=3)
 
     oldValue = linkedObj[id]['value']
     linkedObj[id]['value'] = value
     if(updateObject(id) != 0):
         linkedObj[id]['value'] = oldValue
-        return jsonify(error=3)
+        return jsonify(error=4)
 
     # Check if remote
     if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_PWM):
         if(not linkedObj[id]['remoteClient'] in remoteClients):
-            return jsonify(error=4)
+            return jsonify(error=5)
         return jsonify(error=remoteClientServer.setRemotePWM(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
         pass # TODO
     else:
-        return jsonify(error=5)
+        return jsonify(error=6)
 
-    return jsonify(error=6)
+    return jsonify(error=7)
 
 ''' Set RGB object '''
 @servApp.route('/rgb/<id>/<int:value>')
@@ -145,7 +147,9 @@ def setRGB(id, value):
     green = (value & 0x0000FF00) >> 8
     blue  = value & 0x000000FF
 
-    # TODO Check for RGB 
+    if(linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_RGB and 
+       linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_REM_RGB):
+        return jsonify(error=2)
  
     oldValue = linkedObj[id]['value']
     linkedObj[id]['value'][0] = red
