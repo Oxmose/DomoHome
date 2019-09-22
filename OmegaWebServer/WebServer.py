@@ -106,6 +106,8 @@ def toggle(id):
     else:
         return jsonify(error=3)
 
+    return jsonify(error=0)
+
 ''' Set PWM object '''
 @servApp.route('/pwm/<id>/<int:value>')
 def setPWM(id, value):
@@ -114,6 +116,8 @@ def setPWM(id, value):
     if(value < 0 or value > 255):
         return jsonify(error=2)
  
+    # TODO Check for PWM
+
     oldValue = linkedObj[id]['value']
     linkedObj[id]['value'] = value
     if(updateObject(id) != 0):
@@ -126,7 +130,38 @@ def setPWM(id, value):
             return jsonify(error=4)
         return jsonify(error=remoteClientServer.setRemotePWM(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
-        pass 
+        pass # TODO
+    else:
+        return jsonify(error=5)
+
+    return jsonify(error=6)
+
+''' Set RGB object '''
+@servApp.route('/rgb/<id>/<int:value>')
+def setRGB(id, value):
+    if(not str(id) in linkedObj):
+        return jsonify(error=1)
+    red   = (value & 0x00FF0000) >> 16
+    green = (value & 0x0000FF00) >> 8
+    blue  = value & 0x000000FF
+
+    # TODO Check for RGB 
+ 
+    oldValue = linkedObj[id]['value']
+    linkedObj[id]['value'][0] = red
+    linkedObj[id]['value'][1] = green
+    linkedObj[id]['value'][2] = blue
+    if(updateObject(id) != 0):
+        linkedObj[id]['value'] = oldValue
+        return jsonify(error=3)
+
+    # Check if remote
+    if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
+        if(not linkedObj[id]['remoteClient'] in remoteClients):
+            return jsonify(error=4)
+        return jsonify(error=remoteClientServer.setRemoteRGB(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
+    elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_RGB):
+        pass # TODO
     else:
         return jsonify(error=5)
 

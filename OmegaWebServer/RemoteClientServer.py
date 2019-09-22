@@ -76,6 +76,37 @@ class RemoteClientServer:
             return 0
         else:
             return 1
+
+    def setRemoteRGB(self, obj, server):
+        packet = PACKET_STRUCT
+        stateVal = 0 
+        if(obj['state']):
+            stateVal = 1
+
+        packet[0] = CONSTANTS.RGB_REQ_ID
+        packet[4] = obj['gpio'][0]
+        packet[5] = obj['gpio'][1]
+        packet[6] = obj['gpio'][2]
+        packet[7] = obj['value'][0] * stateVal
+        packet[8] = obj['value'][1] * stateVal
+        packet[9] = obj['value'][2] * stateVal
+        sent = False
+        for i in range(0, 5):
+            self.sendTo(server['ip'], server['port'], array.array('B',packet))
+            try:
+                data = self.socket.recvfrom(20)
+                returnType = list(data[0])[0]
+                returnVal  = list(data[0])[1]
+                if(returnType == CONSTANTS.RESPONSE_PACKET_TYPE and returnVal == 0):
+                    sent = True
+                    break
+            except socket.timeout:
+                pass
+        
+        if(sent):
+            return 0
+        else:
+            return 1
     
     def sendTo(self, ip, port, buffer):
         self.socket.sendto(buffer, (ip, port))

@@ -22,6 +22,7 @@
 #define REQ_TEMPERATURE_TYPE    0x2
 #define REQ_TOGGLE_TYPE         0x3
 #define REQ_SET_PWM_TYPE        0x4
+#define REQ_SET_RGB_TYPE        0x5
 
 #define PACKET_SIZE 20
 
@@ -60,5 +61,15 @@ typedef struct pwm_packet
 
   char pad[14];  
 } pwm_packet_t;
+
+typedef struct rgb_packet
+{
+  uint32_t packetType;
+ 
+  uint8_t gpio[3];
+  uint8_t value[3];
+
+  char pad[10];  
+} rgb_packet_t;
 
 #endif /* #ifndef __UDP_INTERFACE_H__ */

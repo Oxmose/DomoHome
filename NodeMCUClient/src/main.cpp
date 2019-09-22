@@ -112,6 +112,16 @@ void loop() {
     packet[1] = 0;
     packeted = true;
   }
+  else if(packetType == REQ_SET_RGB_TYPE)
+  {
+    logInfo("REQ RGB");
+    setPwm(((rgb_packet_t*)packet)->gpio[0], ((rgb_packet_t*)packet)->value[0]);
+    setPwm(((rgb_packet_t*)packet)->gpio[1], ((rgb_packet_t*)packet)->value[1]);
+    setPwm(((rgb_packet_t*)packet)->gpio[2], ((rgb_packet_t*)packet)->value[2]);
+    packet[0] = RESPONSE_PACKET_TYPE;
+    packet[1] = 0;
+    packeted = true;
+  }
   else
   {
     logWarning("Unknown packet");
