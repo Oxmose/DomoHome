@@ -110,10 +110,16 @@ function getElements() {
 }
 
 function setDialog() {
+	var el = dialog.querySelector('.close');
+    elClone = el.cloneNode(true);
+	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.close').addEventListener('click', function () {
         dialog.close();
         picker.exit();
     });
+    var el = dialog.querySelector('.closeabout');
+    elClone = el.cloneNode(true);
+	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.closeabout').addEventListener('click', function () {
         dialog.close();
     });
@@ -184,6 +190,9 @@ function showPWMDialog(id) {
 
     document.querySelector('#pwm_slider').MaterialSlider.change(pwm[id].value);
 
+	var el = dialog.querySelector('.save');
+    elClone = el.cloneNode(true);
+	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.save').addEventListener('click', function() {
         setPWM(id);
     });
@@ -202,7 +211,9 @@ function showRGBDialog(id) {
     cancelSaveBlock.css("display", "block");
     closeBlock.css("display", "none");
 
-
+	var el = dialog.querySelector('.save');
+    elClone = el.cloneNode(true);
+	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.save').addEventListener('click', function() {
         setRGB(id);
     });
@@ -246,6 +257,10 @@ function showSettings() {
         tempUnitCRadio.removeClass('is-checked');
         tempUnitFRadio.addClass('is-checked');
     }
+    
+    var el = dialog.querySelector('.save');
+    elClone = el.cloneNode(true);
+	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.save').addEventListener('click', function() {
         $.ajax({ 
             url: "/setTempUnit/".concat(tempUnitCRadio.hasClass('is-checked') ? "0" : "1")
@@ -272,13 +287,14 @@ function updateObjects() {
             if(switches[key].state) {
                 chk.attr('checked', 'true');
             }
-            label.append(chk);
+            label.prepend(chk);
             item.append(label)
             list.append(item);
         }
         if(Object.keys(switches).length == 1) {
             $('#switches_block_container').append("<br />");
         }
+        
     }
     else {
         $('#switches_block').hide();
@@ -300,13 +316,14 @@ function updateObjects() {
             if(pwm[key].state) {
                 chk.attr('checked', 'true');
             }
-            label.append(chk);
+            label.prepend(chk);
             item.append(label)
             list.append(item);
         }
         if(Object.keys(pwm).length == 1) {
             $('#pwm_block_container').append("<br />");
         }
+        
     }
     else {
         $('#pwm_block').hide();
@@ -328,9 +345,12 @@ function updateObjects() {
             if(rgb[key].state) {
                 chk.attr('checked', 'true');
             }
-            label.append(chk);
+            
+            label.prepend(chk);
             item.append(label)
             list.append(item);
+            
+            
         }
         if(Object.keys(rgb).length == 1) {
             $('#rgb_block_container').append("<br />");
@@ -340,7 +360,7 @@ function updateObjects() {
         $('#rgb_block').hide();
     }
 
-
+	componentHandler.upgradeDom();
 }
 
 function HSVtoRGB(h, s, v) {

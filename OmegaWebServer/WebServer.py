@@ -13,6 +13,7 @@ from flask     import Flask, request, render_template, jsonify
 from flask_api import status
 
 from RemoteClientServer import RemoteClientServer
+from InternalObjectManager import InternalObjectManager
 
 ####################################
 # SERVER STATE VARIALBES
@@ -23,6 +24,7 @@ remoteClients = {}
 linkedObj     = {}
 
 remoteClientServer = RemoteClientServer()
+internalManager    = InternalObjectManager()
 
 # We have to keep the Flask servAPP as global var
 servApp = Flask(__name__)
@@ -94,15 +96,27 @@ def toggle(id):
         return jsonify(error=2)
 
     if(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_SWITCH):
-        pass
+        if(not isinstance(linkedObj[id]['value'], int)):
+            print("ERROR: Configuration for object " + str(id) + " has multiple values.")
+            return jsonify(error=3)
+        if(not isinstance(linkedObj[id]['gpio'], int)):
+            print("ERROR: Configuration for object " + str(id) + " has multiple GPIO.")
+            return jsonify(error=3)
+        internalManager.setSwitch(linkedObj[id]['gpio'], linkedObj[id]['state'])
+        return jsonify(error=0)
+
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
         return setPWM(id, linkedObj[id]['value']) 
+        
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_RGB):
         return setRGB(id, (linkedObj[id]['value'][0] << 16) | (linkedObj[id]['value'][1] << 8) | linkedObj[id]['value'][2])
+        
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_PWM):
         return setPWM(id, linkedObj[id]['value'])
+        
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
         return setRGB(id, (linkedObj[id]['value'][0] << 16) | (linkedObj[id]['value'][1] << 8) | linkedObj[id]['value'][2])
+        
     else:
         return jsonify(error=3)
 
@@ -119,6 +133,13 @@ def setPWM(id, value):
     if(linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_PWM and 
        linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_REM_PWM):
         return jsonify(error=3)
+    
+    if(not isinstance(linkedObj[id]['value'], int)):
+        print("ERROR: Configuration for object " + str(id) + " has multiple values.")
+        return jsonify(error=3)
+    if(not isinstance(linkedObj[id]['gpio'], int)):
+        print("ERROR: Configuration for object " + str(id) + " has multiple GPIO.")
+        return jsonify(error=3)
 
     oldValue = linkedObj[id]['value']
     linkedObj[id]['value'] = value
@@ -131,8 +152,12 @@ def setPWM(id, value):
         if(not linkedObj[id]['remoteClient'] in remoteClients):
             return jsonify(error=5)
         return jsonify(error=remoteClientServer.setRemotePWM(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
+        
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_PWM):
-        pass # TODO
+        
+        internalManager.setPWM(linkedObj[id]['gpio'], linkedObj[id]['value'] * linkedObj[id]['state'])
+        return jsonify(error=0)
+        
     else:
         return jsonify(error=6)
 
@@ -150,7 +175,14 @@ def setRGB(id, value):
     if(linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_RGB and 
        linkedObj[id]['type'] != CONSTANTS.OBJ_TYPE_REM_RGB):
         return jsonify(error=2)
- 
+        
+    if(not isinstance(linkedObj[id]['value'], list)):
+        print("ERROR: Configuration for object " + str(id) + " doenst have the right values.")
+        return jsonify(error=3)
+    if(not isinstance(linkedObj[id]['gpio'], list)):
+        print("ERROR: Configuration for object " + str(id) + " doesnt have the right GPIO.")
+        return jsonify(error=3)
+    
     oldValue = linkedObj[id]['value']
     linkedObj[id]['value'][0] = red
     linkedObj[id]['value'][1] = green
@@ -164,8 +196,13 @@ def setRGB(id, value):
         if(not linkedObj[id]['remoteClient'] in remoteClients):
             return jsonify(error=4)
         return jsonify(error=remoteClientServer.setRemoteRGB(linkedObj[id], remoteClients[linkedObj[id]['remoteClient']]))
+        
     elif(linkedObj[id]['type'] == CONSTANTS.OBJ_TYPE_RGB):
-        pass # TODO
+        internalManager.setPWM(linkedObj[id]['gpio'][0], linkedObj[id]['value'][0] * linkedObj[id]['state'])
+        internalManager.setPWM(linkedObj[id]['gpio'][1], linkedObj[id]['value'][1] * linkedObj[id]['state'])
+        internalManager.setPWM(linkedObj[id]['gpio'][2], linkedObj[id]['value'][2] * linkedObj[id]['state'])
+        
+        return jsonify(error=0)
     else:
         return jsonify(error=5)
 
@@ -226,7 +263,7 @@ def updateObject(id):
             objects[id]['remoteClientId'] = currObj['remoteClient']
 
         f2 = open('objects.json_tmp', 'w', encoding='utf-8')
-        json.dump(objects, f2)
+        json.dump(objects, f2, indent=4)
 
         f.close()
         f2.close()
