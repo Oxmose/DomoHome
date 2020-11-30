@@ -8,6 +8,7 @@
 import json
 import CONSTANTS
 import os
+import onionGpio
 
 from flask     import Flask, request, render_template, jsonify
 from flask_api import status
@@ -297,6 +298,8 @@ def saveSettings():
     except:     
         pass
 
+def initTemp():
+	
 ####################################
 # MAIN
 ####################################
