@@ -14,6 +14,8 @@ import subprocess
 from flask     import Flask, request, render_template, jsonify
 from flask_api import status
 
+from InternalObjectManager import InternalObjectManager
+
 ####################################
 # SERVER STATE VARIALBES
 ####################################
@@ -23,8 +25,8 @@ serverSettings = {'tempUnit': CONSTANTS.TEMPERATURE_UNIT_C,
 				  'openweatherId': '6077243'
 }
 
-remoteClients = {}
-linkedObj     = {}
+linkedObj       = {}
+internalManager = InternalObjectManager()
 
 # Sensors 
 tempSensor = {}
@@ -55,15 +57,17 @@ def getSettings():
     global serverSettings
     return jsonify(error=0, settings=serverSettings)
     
-''' Set the current temperature unit '''
-@servApp.route('/setTempUnit/<int:unit>')
-def setTempUnit(unit):
+''' Set the settings '''
+@servApp.route('/setSettings/<int:unit>/<int:cityId>')
+def setSettings(unit, cityId):
     global serverSettings
 
     if(unit == CONSTANTS.TEMPERATURE_UNIT_C):
         serverSettings['tempUnit'] = CONSTANTS.TEMPERATURE_UNIT_C
     else:
         serverSettings['tempUnit'] = CONSTANTS.TEMPERATURE_UNIT_F 
+
+    serverSettings['openweatherId'] = cityId;
 
     saveSettings()
     return jsonify(error=0)
@@ -82,21 +86,49 @@ def getEnv():
     sensor_data = out.split('\n')
     return jsonify(temp=sensor_data[1], humidity=sensor_data[0], unit=serverSettings['tempUnit'], error=0)
     
+''' Set the server object '''
+@servApp.route('/getObjects')
+def getObjects():
+    global linkedObj
+    return jsonify(error=0, objects=linkedObj)
+    
+''' Toggle a given object '''
+@servApp.route('/toggle/<int:objId>')
+def toggleObject(objId):
+    global linkedObj
+    
+    if(not str(objId) in linkedObj):
+        return jsonify(error=1)
+        
+    objId = str(objId)
+    
+    linkedObj[objId]['state'] = not linkedObj[objId]['state']
+    if(updateObject(objId) != 0):
+        linkedObj[objId]['state'] = not linkedObj[objId]['state']
+        return jsonify(error=2)
+
+    if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_SWITCH):
+        internalManager.setSwitch(linkedObj[objId]['gpio'], linkedObj[objId]['state'])
+    else:
+        return jsonify(error=3)
+
+    return jsonify(error=0, objects=linkedObj[objId])
+
+
+    
 ####################################
 # INTERNAL
 ####################################
 
 def loadObjects():
     global linkedObj
-    global remoteClients
-
-    remoteClients.clear()
     linkedObj.clear()
+    
     try:
         f = open('objects.json')
         objects = json.loads(f.read())
         for key in objects:
-            if(key in linkedObj or key in remoteClients):
+            if(key in linkedObj):
                 print("Duplicate object id " + str(key))
                 exit(-1)
 
@@ -104,15 +136,10 @@ def loadObjects():
 
             if(obj['type'] == CONSTANTS.OBJ_TYPE_SWITCH or obj['type'] == CONSTANTS.OBJ_TYPE_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_RGB):
                 linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio']}
-            elif(obj['type'] == CONSTANTS.OBJ_TYPE_REM_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_REM_RGB):
-                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio'], 'remoteClient': obj['remoteClientId']}
-            elif(obj['type'] == CONSTANTS.OBJ_TYPE_REMOTE):
-                remoteClients[key] = {'ip': obj['ip'], 'port': obj['port'], 'tempSensor': obj['tempSensor']}
             else:
                 print("Unkonwn object type " + str(obj['type']))
 
         print("Loaded " + str(len(linkedObj)) + " objects")
-        print("Loaded " + str(len(remoteClients)) + " remote client")
     except ValueError as e:
         print("ERROR " + e)
         exit(-1)
@@ -125,7 +152,7 @@ def loadObjects():
 
 def updateObject(id):
     try:
-        f = open('objects.json', 'r', encoding='utf-8')
+        f = open('objects.json', 'r')
         objects = json.loads(f.read())
         currObj = linkedObj[id]
 
@@ -134,10 +161,8 @@ def updateObject(id):
         objects[id]['lastState'] = currObj['state']
         objects[id]['value'] = currObj['value']
         objects[id]['gpio'] = currObj['gpio']
-        if('remoteClient' in currObj):
-            objects[id]['remoteClientId'] = currObj['remoteClient']
 
-        f2 = open('objects.json_tmp', 'w', encoding='utf-8')
+        f2 = open('objects.json_tmp', 'w')
         json.dump(objects, f2, indent=4)
 
         f.close()

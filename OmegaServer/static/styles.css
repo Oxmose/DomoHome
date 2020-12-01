@@ -128,6 +128,7 @@ html, body {
 .demo-layout .demo-navigation .mdl-navigation__link:hover {
   background-color: #ecf0f1;
   color: #34495e;
+  transition: all 0.5s;
 }
 .demo-navigation .mdl-navigation__link .material-icons {
   font-size: 24px;
@@ -257,6 +258,13 @@ _:-ms-input-placeholder, :root .demo-graph {
 	
 	float: left;
 	margin: 10px !important;
+	
+	transition: all 0.5s;
+}
+.switch_card:hover {
+	
+	box-shadow: 0 0 10px #ecf0f1;
+
 }
 
 .switch_card .title {
@@ -268,6 +276,8 @@ _:-ms-input-placeholder, :root .demo-graph {
 	font-weight: bold;
 
 }
+
+
 
 .switch_card_on { 
 	color: #7f8c8d;

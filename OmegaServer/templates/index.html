@@ -89,12 +89,16 @@
                 <a class="mdl-navigation__link" href="#" onclick="showAbout()"><i
                         class="mdl-color-text--blue-grey-400 material-icons"
                         role="presentation">help_outline</i><span>About</span></a>
+                <a class="mdl-navigation__link" href="#" onclick="rebootServer()"><i
+                        class="mdl-color-text--blue-grey-400 material-icons"
+                        role="presentation">sync</i><span>Reboot</span></a>
             </nav>
         </div>
         <main class="mdl-layout__content mdl-color--blue-grey-900">
 
             {% if display == 0 %}
             <div class="demo-card-square mdl-card mdl-shadow--2dp">
+            	
 			  <div class="mdl-card__supporting-text mdl-card--border">
 			  	<img src="{{ url_for('static', filename='images/intside.png') }}" width="50" style="float:left; margin-right:10px;"/>
 			    Temperature: <span id="temp_span_inside_2">21.55&deg;C</span>
@@ -102,6 +106,7 @@
 			    Humidity: <span id="humidity_span_inside_0">54%</span>
 			    <br />
 			  </div>
+			  
 			  <div class="mdl-card__supporting-text mdl-card--border">
 				<img src="{{ url_for('static', filename='images/outside.png') }}" width="35" style="float:left; margin-right:20px; margin-top: 8px;"/>
 			    Temperature: <span id="temp_span_outside">21.55&deg;C</span>
@@ -116,39 +121,15 @@
 			      Update Data
 			    </a>
 			  </div>
+			  
 			</div>
 			
 			<hr class="window_sep"/>
             {% endif %}
            
         	{% if display == 0 or display == 1 %}
-        	<div class="button_group_duo">
-	        	<div class="demo-card-square mdl-card mdl-shadow--2dp switch_card switch_card_on">
-				  <div class="mdl-card__supporting-text">
-				  	<div class="title">Switch Name</div>
-				  </div>
-				  <i class="mdl-color-text--blue-grey-800 material-icons" role="presentation" style="font-size: 80px; margin:auto">power</i>
-				</div>
-				<div class="demo-card-square mdl-card mdl-shadow--2dp switch_card switch_card_off">
-				  <div class="mdl-card__supporting-text">
-				  	<div class="title">Switch Name</div>
-				  </div>
-				  <i class="mdl-color-text--blue-grey-800 material-icons" role="presentation" style="font-size: 80px; margin:auto">power_off</i>
-				</div>
-			</div>
-			<div class="button_group_duo">
-	        	<div class="demo-card-square mdl-card mdl-shadow--2dp switch_card switch_card_on">
-				  <div class="mdl-card__supporting-text">
-				  	<div class="title">Switch Name</div>
-				  </div>
-				  <i class="mdl-color-text--blue-grey-800 material-icons" role="presentation" style="font-size: 80px; margin:auto">power</i>
-				</div>
-				<div class="demo-card-square mdl-card mdl-shadow--2dp switch_card switch_card_off">
-				  <div class="mdl-card__supporting-text">
-				  	<div class="title">Switch Name</div>
-				  </div>
-				  <i class="mdl-color-text--blue-grey-800 material-icons" role="presentation" style="font-size: 80px; margin:auto">power_off</i>
-				</div>
+        	<div id="switches_block">
+	        	
 			</div>
 			<br /><br />
         	{% endif %}
@@ -162,27 +143,7 @@
             <h4 id="dialog_title" class="mdl-dialog__title"></h4>
             <div class="mdl-dialog__content mdl-color-text--white">
                 <p id="dialog_info"></p>
-            
-                <div id="pwm_settings" class="mdl-color-text--white">
-                    <p>
-                        <input class="mdl-slider mdl-js-slider" type="range"
-                            id="pwm_slider" min="0" max="255" value="0"
-                            step="1">
-                    </p>
-                    <br />
-                </div>
-                <div id="rgb_settings" class="mdl-color-text--white">
-                    <section id="color-picker">
-
-                    </section>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                </div>
+ 
                 <div id="app_settings" class="mdl-color-text--white">                   
                    
                     <span>Temperature in &nbsp;&nbsp;&nbsp;</span>
@@ -198,12 +159,8 @@
                     <br /><br />
                     <form action="#">
 					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-color-text--white">
-					    <input class="mdl-textfield__input" type="text" id="sample1">
-					    <label class="mdl-textfield__label mdl-color-text--white" for="sample1">OpenWeather Key</label>
-					  </div>
-					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-color-text--white">
-					    <input class="mdl-textfield__input" type="text" id="sample2">
-					    <label class="mdl-textfield__label mdl-color-text--white" for="sample2">OpenWeather City ID</label>
+					    <input class="mdl-textfield__input" type="text" id="openweater_cityid">
+					    <label class="mdl-textfield__label mdl-color-text--white" for="openweater_cityid">OpenWeather City ID</label>
 					  </div>
 					</form>
                 </div>

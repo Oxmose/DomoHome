@@ -38,7 +38,8 @@ var closeBlock         = null;
 function initUI() {
     getSettings();
     getElements();
-
+	getObjects();
+	
     setDialog();
     setUIUpdater();
 }
@@ -69,18 +70,16 @@ function getElements() {
     dialog = document.querySelector('dialog');
 
     /* Get dialogs elements */
-    tempUnitCRadio   = $('#temp_unit_c_label');
-    tempUnitFRadio   = $('#temp_unit_f_label');
-    dialogSaveButton = $('#dialog_save_button');    
-    container        = document.getElementById('color-picker');
-    picker           = new CP(container, false, container);
-    dialogTitle      = $('#dialog_title');
-    dialogInfo       = $('#dialog_info');
-    pwmSettings      = $('#pwm_settings');
-    rgbSettings      = $('#rgb_settings');
-    appSettings      = $('#app_settings');
-    cancelSaveBlock  = $('#cancel_save_block');
-    closeBlock       = $('#close_block');
+    tempUnitCRadio     = $('#temp_unit_c_label');
+    tempUnitFRadio     = $('#temp_unit_f_label');
+    openweaterKeyInput = $('#openweater_key');
+    openweaterIdInput  = $('#openweater_cityid');
+    dialogSaveButton   = $('#dialog_save_button');    
+    dialogTitle        = $('#dialog_title');
+    dialogInfo         = $('#dialog_info');
+    appSettings        = $('#app_settings');
+    cancelSaveBlock    = $('#cancel_save_block');
+    closeBlock         = $('#close_block');
 }
 
 function setDialog() {
@@ -114,7 +113,7 @@ function updateLoopEnv(){
     $.ajax({ 
         url: "/getEnv",
         complete: function(){
-            setInterval(updateEnv, tempRefreshRate);
+            //setInterval(updateEnv, tempRefreshRate);
             
             $("#loading_screen").fadeOut(500);
         }
@@ -198,8 +197,6 @@ function showAbout() {
     dialogTitle.html("About");
     dialogInfo.html("<p style=\"text-align:justify\">Domohome &copy; Alexy Torres 2020<br /><br />Domohome is a domotic application aimed at managing connected objects in the house.<br /><br /><a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a></p>");
 
-    pwmSettings.css("display", "none");
-    rgbSettings.css("display", "none");
     appSettings.css("display", "none");
 
     cancelSaveBlock.css("display", "none");
@@ -210,10 +207,8 @@ function showAbout() {
 
 function showSettings() {
     dialogTitle.html("Settings");
-
-    pwmSettings.css("display", "none");
-    rgbSettings.css("display", "none");
     appSettings.css("display", "block");
+     dialogInfo.html("");
 
     cancelSaveBlock.css("display", "block");
     closeBlock.css("display", "none");
@@ -227,15 +222,21 @@ function showSettings() {
         tempUnitFRadio.addClass('is-checked');
     }
     
+    openweaterIdInput.val(settings.openweatherId);
+    
+    openweaterIdInput.parent().addClass('is-dirty');
+    
     var el = dialog.querySelector('.save');
     elClone = el.cloneNode(true);
 	el.parentNode.replaceChild(elClone, el);
     dialog.querySelector('.save').addEventListener('click', function() {
         $.ajax({ 
-            url: "/setTempUnit/".concat(tempUnitCRadio.hasClass('is-checked') ? "0" : "1")
+            url: "/setSettings/".concat(tempUnitCRadio.hasClass('is-checked') ? "0" : "1")
+                                .concat("/")
+                                .concat(openweaterIdInput.val())
         }).then(function(data) {
             dialog.close();
-            updateTemp();
+            updateEnv();
         });
 
         getSettings();
@@ -244,6 +245,55 @@ function showSettings() {
     dialog.showModal();
 }
 
+
+function updateObjects() {
+    if(switches.length != 0) {
+        list = $('#switches_block');
+        lastBlock = $('<div class="button_group_duo">');
+        
+        var i = 0;
+        for (var key in switches) {
+        	if(i != 0 && i % 2 == 0)
+        	{
+        		list.append(lastBlock);
+        		lastBlock = $('<div class="button_group_duo">');
+        	}
+        	
+        	card = $('<div class="demo-card-square mdl-card mdl-shadow--2dp switch_card">');
+        	item = $('<div class="mdl-card__supporting-text">');
+        	title = $('<div class="title">');
+        	title.html(switches[key].name);
+        	icon = $('<i class="mdl-color-text--blue-grey-800 material-icons" role="presentation" style="font-size: 80px; margin:auto">');
+        	if(switches[key].state)
+        	{
+        		icon.html("power");
+        		card.addClass("switch_card_on");
+        	}
+        	else 
+        	{
+        		icon.html("power_off");
+        		card.addClass("switch_card_off");
+        	}
+        	
+        	card.data("objId", key);
+        	
+        	card.click(function() {
+        		toggleObject($(this));
+        	});
+            
+            item.append(title);
+            card.append(icon);
+            card.append(item);
+            lastBlock.append(card);
+        }
+        list.append(lastBlock);
+    }
+    else {
+        $('#switches_block').hide();
+    }
+
+	componentHandler.upgradeDom();
+}
 
 /* -------------------------------*
  * Server Settings
@@ -259,3 +309,55 @@ function rebootServer() {
 /* -------------------------------*
  * Server Queries
  *------------------------------*/
+function getObjects() {
+    $.ajax({ 
+        url: "/getObjects"
+    }).then(function(data) {
+        if(data.error == 0) {
+            objects = data.objects;
+            for(var key in objects) {
+                if(objects[key].type == 0) {
+                    switches[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};                    
+                }
+                else if(objects[key].type == 1 || objects[key].type == 3) {
+                    pwm[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};
+                }
+                else if(objects[key].type == 2 || objects[key].type == 4) {
+                    rgb[key] = {name: objects[key].name, state: objects[key].state, value: objects[key].value};
+                    objTypes[key] = {type: objects[key].type};
+                }
+
+            }
+        }
+        else {
+            getObjects();
+        }
+
+        updateObjects();
+    });
+}
+
+function toggleObject(eventObj) {
+	$.ajax({ 
+        url: "/toggle/" + eventObj.data("objId")
+    }).then(function(data) {
+        if(data.error == 0) {
+        	objects[eventObj.data("objId")].state = data.objects.state;
+            if(data.objects.state) {
+            	eventObj.removeClass("switch_card_off");
+            	eventObj.addClass("switch_card_on");
+            	eventObj.find("i").html("power");
+            }
+            else {
+            	eventObj.addClass("switch_card_off");
+            	eventObj.removeClass("switch_card_on");
+            	eventObj.find("i").html("power_off");
+            }
+        }
+        else {
+            alert("Could not toggle object " + objId);
+        }
+    });
+}
