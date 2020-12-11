@@ -298,3 +298,9 @@ _:-ms-input-placeholder, :root .demo-graph {
 	width:280px;
 	margin:auto;
 }
+
+#history_dialog {
+    width: 90%;
+    position: absolute !important;
+    top: 10px !important;
+}

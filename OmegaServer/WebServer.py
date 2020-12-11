@@ -7,7 +7,6 @@
 
 import json
 import os
-import onionGpio
 import CONSTANTS
 import subprocess
 
@@ -15,21 +14,24 @@ from flask     import Flask, request, render_template, jsonify
 from flask_api import status
 
 from InternalObjectManager import InternalObjectManager
+from Monitor               import Monitor
 
 ####################################
 # SERVER STATE VARIALBES
 ####################################
 serverSettings = {'tempUnit': CONSTANTS.TEMPERATURE_UNIT_C, 
-                  'tempSensorGPIO': 0, 
+                  'tempSensorGPIO': 18, 
                   'openweatherKey': '5f6f9ed658e35a4409a32bfb0271d32c',
-				  'openweatherId': '6077243'
+				  'openweatherId': '6077243',
+				  'envUpdatePeriod': 5,
+				  'envUpdateMemory': 1000,
 }
 
 linkedObj       = {}
 internalManager = InternalObjectManager()
 
-# Sensors 
-tempSensor = {}
+# Monitor 
+monitor         = Monitor(0, 0, 0)
 
 # We have to keep the Flask servAPP as global var
 servApp = Flask(__name__)
@@ -46,6 +48,13 @@ def indexId():
 def switchesDisplay():
     return render_template("index.html", display=1)
 
+@servApp.route('/dimmers')
+def pwmDisplay():
+    return render_template("index.html", display=2)
+    
+@servApp.route('/LEDs')
+def ledsDisplay():
+    return render_template("index.html", display=3)
 # api.openweathermap.org/data/2.5/weather?id=6077243&appid=5f6f9ed658e35a4409a32bfb0271d32c
 
 ####################################
@@ -58,8 +67,8 @@ def getSettings():
     return jsonify(error=0, settings=serverSettings)
     
 ''' Set the settings '''
-@servApp.route('/setSettings/<int:unit>/<int:cityId>')
-def setSettings(unit, cityId):
+@servApp.route('/setSettings/<int:unit>/<int:cityId>/<int:refreshRate>/<int:histSize>')
+def setSettings(unit, cityId, refreshRate, histSize):
     global serverSettings
 
     if(unit == CONSTANTS.TEMPERATURE_UNIT_C):
@@ -67,9 +76,12 @@ def setSettings(unit, cityId):
     else:
         serverSettings['tempUnit'] = CONSTANTS.TEMPERATURE_UNIT_F 
 
-    serverSettings['openweatherId'] = cityId;
+    serverSettings['openweatherId']   = cityId
+    serverSettings['envUpdatePeriod'] = refreshRate
+    serverSettings['envUpdateMemory'] = histSize
 
     saveSettings()
+    print(serverSettings)
     return jsonify(error=0)
 
 ''' Reboot '''
@@ -81,11 +93,16 @@ def reboot():
 ''' Get the current environment data '''
 @servApp.route('/getEnv')
 def getEnv():
-    proc = subprocess.Popen(['./checkHumidity ' + str(serverSettings['tempSensorGPIO']) + ' DHT22'], stdout=subprocess.PIPE, shell=True)
-    (out, err) = proc.communicate()
-    sensor_data = out.split('\n')
+    global monitor
+    sensor_data = monitor.getLastData()
     return jsonify(temp=sensor_data[1], humidity=sensor_data[0], unit=serverSettings['tempUnit'], error=0)
     
+''' Get the environment data history'''
+@servApp.route('/getEnvHist')
+def getEnvHist():
+    global monitor
+    return jsonify(data=monitor.getData(), unit=serverSettings['tempUnit'], error=0)
+
 ''' Set the server object '''
 @servApp.route('/getObjects')
 def getObjects():
@@ -114,7 +131,102 @@ def toggleObject(objId):
 
     return jsonify(error=0, objects=linkedObj[objId])
 
+''' Toggle a given PWM object '''
+@servApp.route('/togglePWM/<int:objId>')
+def togglePWMObject(objId):
+    global linkedObj
+    
+    if(not str(objId) in linkedObj):
+        return jsonify(error=1)
+        
+    objId = str(objId)
+    
+    linkedObj[objId]['state'] = not linkedObj[objId]['state']
+    if(updateObject(objId) != 0):
+        linkedObj[objId]['state'] = not linkedObj[objId]['state']
+        return jsonify(error=2)
+    
+    value = linkedObj[objId]['value']
+    if(linkedObj[objId]['state'] == False):
+        value = 0;
 
+    if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_PWM):
+        internalManager.setPWM(linkedObj[objId]['gpio'], value)
+    else:
+        return jsonify(error=3)
+
+    return jsonify(error=0, objects=linkedObj[objId])
+    
+''' Set a given PWM object '''
+@servApp.route('/setPWM/<int:objId>/<int:value>')
+def setPWM(objId, value):
+    global linkedObj
+    
+    if(not str(objId) in linkedObj):
+        return jsonify(error=1)
+        
+    objId = str(objId)
+    
+    linkedObj[objId]['value'] = value;
+    
+    if(value == 0):
+        linkedObj[objId]['state'] = False
+    else:
+        linkedObj[objId]['state'] = True
+        
+    if(updateObject(objId) != 0):
+        return jsonify(error=2)
+
+    if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_PWM):
+        internalManager.setPWM(linkedObj[objId]['gpio'], value)
+    else:
+        return jsonify(error=3)
+
+    return jsonify(error=0, objects=linkedObj[objId])
+    
+
+''' Set a given RGB object '''
+@servApp.route('/setRGB/<int:objId>/<int:red>/<int:green>/<int:blue>')
+def setRGB(objId, red, green, blue):
+    global linkedObj
+    
+    if(not str(objId) in linkedObj):
+        return jsonify(error=1)
+        
+    objId = str(objId)
+    
+    if(red > 255):
+        red = 255
+    if(green > 255):
+        green = 255
+    if(blue > 255):
+        blue = 255
+    
+    linkedObj[objId]['value'] = [red, green, blue];
+    
+    totalVal = red + green + blue
+    
+    if(totalVal == 0):
+        linkedObj[objId]['state'] = False
+    else:
+        linkedObj[objId]['state'] = True
+        
+    if(updateObject(objId) != 0):
+        return jsonify(error=2)
+
+    if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_RGB):
+        # Transpose to percentage
+        red = red * 100 / 255;
+        green = green * 100 / 255;
+        blue = blue * 100 / 255;
+    
+        internalManager.setPWM(linkedObj[objId]['gpio'][0], red)
+        internalManager.setPWM(linkedObj[objId]['gpio'][1], green)
+        internalManager.setPWM(linkedObj[objId]['gpio'][2], blue)
+    else:
+        return jsonify(error=3)
+
+    return jsonify(error=0, objects=linkedObj[objId])
     
 ####################################
 # INTERNAL
@@ -193,12 +305,9 @@ def saveSettings():
     global serverSettings
     try:
         f = open('config.pak', 'w')
-        json.dump(serverSettings, f)
+        json.dump(serverSettings, f, indent=4)
     except:     
         pass
-        
-def initSensors():
-	tempSensor = onionGpio.OnionGpio(serverSettings['tempSensorGPIO'])
 	
 
 ####################################
@@ -206,10 +315,20 @@ def initSensors():
 ####################################
 
 def rebootServer():
+    global monitor
+    
     print("Loading data...")
+    
     loadObjects()
     loadSettings()
     saveSettings()
+    
+    if(monitor != None):
+        monitor.stop()
+        del monitor
+        
+    monitor = Monitor(serverSettings['tempSensorGPIO'], serverSettings['envUpdateMemory'], serverSettings['envUpdatePeriod'])
+    monitor.start()
     
 
 if __name__ == '__main__': 
@@ -217,5 +336,6 @@ if __name__ == '__main__':
     print("#============================#")
     print("|    Starting the server     |")
     print("#============================#")
-    servApp.run(debug=True, host='0.0.0.0')
+    servApp.run(debug=True, host='0.0.0.0', use_reloader=False)
+    
     

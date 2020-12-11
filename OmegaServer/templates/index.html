@@ -77,10 +77,10 @@
                         role="presentation">home</i>Dashboard</a>
                 <hr class="mdl-navigation__sep" />
                 <a class="mdl-navigation__link" href="switches"><i class="mdl-color-text--blue-grey-400 material-icons"
-                        role="presentation">sync_disabled</i>Switches</a>
-                <a class="mdl-navigation__link" href="1"><i class="mdl-color-text--blue-grey-400 material-icons"
+                        role="presentation">power</i>Switches</a>
+                <a class="mdl-navigation__link" href="dimmers"><i class="mdl-color-text--blue-grey-400 material-icons"
                         role="presentation">slow_motion_video</i>Dimmers</a>
-                <a class="mdl-navigation__link" href="2"><i class="mdl-color-text--blue-grey-400 material-icons"
+                <a class="mdl-navigation__link" href="LEDs"><i class="mdl-color-text--blue-grey-400 material-icons"
                         role="presentation">group_work</i>LEDs</a>
                 <div class="mdl-layout-spacer"></div>
                 <a class="mdl-navigation__link" href="#" onclick="showSettings()"><i
@@ -120,6 +120,9 @@
 			    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="width:215px; text-align:center" onClick="updateEnv(); updateWeather()">
 			      Update Data
 			    </a>
+			    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="width:215px; text-align:center" onClick="showHistory()">
+			      View History
+			    </a>
 			  </div>
 			  
 			</div>
@@ -137,15 +140,42 @@
         	{% if display == 0 %}
         	<hr class="window_sep"/>
             {% endif %}
+            
+            {% if display == 0 or display == 2 %}
+        	<div id="pwm_block">
+	        	
+			</div>
+			<br /><br />
+        	{% endif %}
+        	
+        	{% if display == 0 %}
+        	<hr class="window_sep"/>
+            {% endif %}
+            
+            {% if display == 0 or display == 3 %}
+        	<div id="rgb_block">
+	        	
+			</div>
+			<br /><br />
+        	{% endif %}
         </main>
-
-        <dialog id="main_dialog" class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white">
-            <h4 id="dialog_title" class="mdl-dialog__title"></h4>
-            <div class="mdl-dialog__content mdl-color-text--white">
-                <p id="dialog_info"></p>
- 
-                <div id="app_settings" class="mdl-color-text--white">                   
-                   
+        
+        <dialog class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white" id="history_dialog">
+            <div class="mdl-dialog__content">
+                <h4 class="mdl-dialog__title mdl-color-text--white">Environment Data</h4><br />
+              <div id="app_settings" class="mdl-color-text--white">   
+                    <canvas id="history_chart"></canvas>
+              </div>
+            </div>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+              <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white close">Close</button>
+            </div>
+        </dialog>
+        
+        <dialog class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white" id="settings_dialog">
+            <div class="mdl-dialog__content">
+              <div id="app_settings" class="mdl-color-text--white">     
+                    <h4 class="mdl-dialog__title">Settings</h4><br />
                     <span>Temperature in &nbsp;&nbsp;&nbsp;</span>
                     <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="temp_unit_c" id="temp_unit_c_label">
                         <input type="radio" id="temp_unit_c" class="mdl-radio__button" name="options" value="1" checked>
@@ -157,39 +187,77 @@
                         <span class="mdl-radio__label">&deg;F</span>
                     </label>
                     <br /><br />
-                    <form action="#">
-					  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-color-text--white">
-					    <input class="mdl-textfield__input" type="text" id="openweater_cityid">
-					    <label class="mdl-textfield__label mdl-color-text--white" for="openweater_cityid">OpenWeather City ID</label>
-					  </div>
-					</form>
+				    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-color-text--white">
+				        <input class="mdl-textfield__input" type="text" id="openweater_cityid">
+				        <label class="mdl-textfield__label mdl-color-text--white" for="openweater_cityid">OpenWeather City ID</label>
+				    </div>
+				    
+				    <span>Environment refresh rate: </span> <span id="env_refresh_rate_val"> </span>
+				    <input class="mdl-slider mdl-js-slider" type="range" min="5" max="3600" value="25" tabindex="0" id="env_refresh_rate" oninput="updateSettingsSliders()">
+				    <br />
+				    <span>Environment sample size: </span> <span id="env_history_val"> </span>
+                    <input class="mdl-slider mdl-js-slider" type="range" min="10" max="500" value="100" tabindex="0" id="env_history" oninput="updateSettingsSliders()">
                 </div>
             </div>
-            <div class="mdl-dialog__actions">
-                <div id="cancel_save_block">
-                    <button type="button"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white close">Cancel</button>
-                    <button type="button"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white save">Save</button>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+              <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white save">Save</button>
+              <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white close">Close</button>
+            </div>
+        </dialog>
+        
+        <dialog class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white" id="about_dialog">
+            <div class="mdl-dialog__content mdl-color-text--white">
+                <h4 class="mdl-dialog__title">About</h4><br />
+                <p style="text-align:justify">
+                    Domohome &copy; Alexy Torres 2020<br /><br />
+                    Domohome is a domotic application aimed at managing connected objects in the house.<br /><br />
+                    <a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a>
+                </p>
+            </div>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+              <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white close">Close</button>
+            </div>
+        </dialog>
+        
+        <dialog class="mdl-dialog mdl-color--blue-grey-900 mdl-color-text--white" id="pwm_dialog">
+            <div class="mdl-dialog__content">
+                <div id="pwm_data" class="mdl-color-text--white">     
+                    <h5 class="mdl-dialog__title" id="pwm_modal_title">Dimmer</h5><br />
+				    <input class="mdl-slider mdl-js-slider" type="range" min="0" max="100" value="25" tabindex="0" id="pwm_value" onChange="">
+				    <br />
+				    <a id="pwn_switch_btn" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="width:215px; text-align:center">
+    			      Turn ON
+    			    </a>
                 </div>
-                <div id="close_block">
-                    <button type="button"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white closeabout">Close</button>
-                </div>
+            </div>
+            <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+              <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white close">Close</button>
             </div>
         </dialog>
     </div>
 	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="{{ url_for('static', filename='color-picker.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="{{ url_for('static', filename='ui-manager.js') }}"></script>
 </body>
 
 <script>
     $( document ).ready(function() {
-        var dialog = document.querySelector('dialog');
-        if (!dialog.showModal) {
-            dialogPolyfill.registerDialog(dialog);
+        var settingsDialog = document.querySelector('#settings_dialog');
+        var aboutDialog = document.querySelector('#about_dialog');
+        var histDialog = document.querySelector('#history_dialog');
+        var pwmDialog = document.querySelector('#pwm_dialog');
+        if (!settingsDialog.showModal) {
+            dialogPolyfill.registerDialog(settingsDialog);
+        }
+        if (!aboutDialog.showModal) {
+            dialogPolyfill.registerDialog(aboutDialog);
+        }
+        if (!histDialog.showModal) {
+            dialogPolyfill.registerDialog(histDialog);
+        }
+        if (!pwmDialog.showModal) {
+            dialogPolyfill.registerDialog(pwmDialog);
         }
         
         initUI();

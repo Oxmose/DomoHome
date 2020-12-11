@@ -1,45 +1,46 @@
 {
     "1": {
-        "gpio": 1, 
-        "type": 1, 
-        "name": "Sofa LEDS", 
-        "value": 205, 
+        "gpio": 0,
+        "type": 1,
+        "name": "Sofa LEDS",
+        "value": 71,
         "lastState": false
-    }, 
+    },
     "0": {
-        "gpio": 1, 
-        "type": 0, 
-        "name": "Sofa Light", 
-        "value": 1, 
+        "gpio": 19,
+        "type": 0,
+        "name": "Sofa Light",
+        "value": 1,
         "lastState": false
-    }, 
-    "3": {
-        "gpio": 0, 
-        "type": 0, 
-        "name": "Sofa Light 1", 
-        "value": 1, 
-        "lastState": false
-    }, 
+    },
     "2": {
         "gpio": [
-            0, 
-            1, 
-            2
-        ], 
-        "type": 2, 
-        "name": "Windows LEDS", 
+            1,
+            2,
+            3
+        ],
+        "type": 2,
+        "name": "Windows LEDS",
         "value": [
-            252, 
-            252, 
-            252
-        ], 
+            255,
+            255,
+            0
+        ],
         "lastState": true
-    }, 
-    "4": {
-        "gpio": 0, 
-        "type": 0, 
-        "name": "Sofa Light 2", 
-        "value": 1, 
-        "lastState": false
+    },
+    "3": {
+        "gpio": [
+            4,
+            5,
+            6
+        ],
+        "type": 2,
+        "name": "Living Room LEDS",
+        "value": [
+            50,
+            0,
+            0
+        ],
+        "lastState": true
     }
 }
