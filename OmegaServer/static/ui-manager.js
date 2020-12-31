@@ -22,6 +22,7 @@ var settingsDialog     = null;
 var aboutDialog        = null;
 var historyDialog      = null;
 var pwmDialog          = null;
+var rgbDialog          = null;
 
 var lastAboutCloneListener = null;
 var lastHistCloseListener = null;
@@ -30,6 +31,8 @@ var lastSettingsSaveListener = null;
 var lastPWMSwitchBTNListener = null;
 var lastPWMValueListener = null;
 var lastPWMCloseListener = null;
+var lastRGBSwitchBTNListener = null;
+var lastRGBCloseListener = null;
 
 window.chartColors = {
 	red: 'rgb(255, 99, 132)',
@@ -79,6 +82,7 @@ function getElements() {
     aboutDialog = document.querySelector('#about_dialog');
     historyDialog = document.querySelector('#history_dialog');
     pwmDialog = document.querySelector('#pwm_dialog');
+    rgbDialog = document.querySelector('#rgb_dialog');
     
     /* Get dialogs elements */
     openweaterKeyInput = $('#openweater_key');
@@ -504,7 +508,7 @@ function updateRGB() {
         	card.data("objId", key);
         	
         	card.click(function() {
-        		showPWMModal($(this));
+        		showRGBModal($(this));
         	});
             
             item.append(title);
@@ -560,6 +564,49 @@ function showPWMModal(data) {
     pwmDialog.querySelector('.close').addEventListener('click', lastPWMCloseListener);
     
     pwmDialog.showModal();
+}
+
+function showRGBModal(data) {
+    key = data.data("objId");
+    if(rgb[key].state)
+    {
+        $('#rgb_switch_btn').html("Turn OFF");
+    }
+    else 
+    {
+        $('#rgb_switch_btn').html("Turn ON");
+    }
+    
+    $('#rgb_modal_title').html(rgb[key].name);
+
+    
+    if(lastRGBSwitchBTNListener != null) {
+        rgbDialog.querySelector('#rgb_switch_btn').removeEventListener('click', lastRGBSwitchBTNListener);
+    }
+    lastRGBSwitchBTNListener = function() {
+      toggleRGB(key, data);
+    };
+    rgbDialog.querySelector('#rgb_switch_btn').addEventListener('click', lastRGBSwitchBTNListener);
+    
+ 
+    if(lastRGBCloseListener != null) {
+        rgbDialog.querySelector('.close').removeEventListener('click', lastRGBCloseListener);
+    }
+    lastRGBCloseListener = function() {
+      rgbDialog.close();
+    };
+    rgbDialog.querySelector('.close').addEventListener('click', lastRGBCloseListener);
+    
+    $('#colorpicker').farbtastic(function(color) {
+        r = HEXStrtoRGB(color.substring(1, 3));
+        g = HEXStrtoRGB(color.substring(3, 5));
+        b = HEXStrtoRGB(color.substring(5, 7));
+        setRGB(key, r, g, b, data);
+    });
+    picker = $.farbtastic('#colorpicker');
+    picker.setColor(RGBtoHEXStr(rgb[key].value[0], rgb[key].value[1], rgb[key].value[2]))
+    
+    rgbDialog.showModal();
 }
 
 function updateObjects() {
@@ -679,7 +726,74 @@ function setPWM(key, value, eventObj) {
             }
         }
         else {
+            alert("Could not set object " + objId);
+        }
+    });
+}
+
+function toggleRGB(key, eventObj) {
+    $.ajax({ 
+        url: "/toggleRGB/" + key
+    }).then(function(data) {
+        if(data.error == 0) {
+        	rgb[key].state = data.objects.state;
+            if(data.objects.state) {
+            	eventObj.removeClass("switch_card_off");
+            	eventObj.addClass("switch_card_on");
+            	$('#rgb_switch_btn').html("Turn OFF");
+            }
+            else {
+            	eventObj.addClass("switch_card_off");
+            	eventObj.removeClass("switch_card_on");
+            	$('#rgb_switch_btn').html("Turn ON");
+            }
+        }
+        else {
             alert("Could not toggle object " + objId);
         }
     });
+}
+
+function setRGB(key, r, g, b, eventObj) {
+    $.ajax({ 
+        url: "/setRGB/" + key + "/" + r + "/" + g + "/" + b
+    }).then(function(data) {
+        if(data.error == 0) {
+        	rgb[key].state = data.objects.state;
+        	rgb[key].value = data.objects.value;
+            if(data.objects.state) {
+            	eventObj.removeClass("switch_card_off");
+            	eventObj.addClass("switch_card_on");
+            	$('#rgb_switch_btn').html("Turn OFF");
+            }
+            else {
+            	eventObj.addClass("switch_card_off");
+            	eventObj.removeClass("switch_card_on");
+            	$('#rgb_switch_btn').html("Turn ON");
+            }
+        }
+        else {
+            alert("Could not set object " + objId);
+        }
+    });
+}
+
+
+function decimalToHex(d, padding) {
+    var hex = Number(d).toString(16);
+    padding = typeof (padding) === "undefined" || padding === null ? padding = 2 : padding;
+
+    while (hex.length < padding) {
+        hex = "0" + hex;
+    }
+
+    return hex;
+}
+
+function RGBtoHEXStr(r, g, b) {
+    return "#" + decimalToHex(r, 2) + decimalToHex(g, 2) + decimalToHex(b, 2);
+}
+
+function HEXStrtoRGB(value) {
+    return parseInt('0x' + value);
 }

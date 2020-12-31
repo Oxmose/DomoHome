@@ -22,9 +22,9 @@
         "type": 2,
         "name": "Windows LEDS",
         "value": [
-            255,
-            255,
-            0
+            29,
+            140,
+            33
         ],
         "lastState": true
     },
@@ -41,6 +41,6 @@
             0,
             0
         ],
-        "lastState": true
+        "lastState": false
     }
 }

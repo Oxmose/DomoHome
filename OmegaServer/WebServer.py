@@ -52,10 +52,9 @@ def switchesDisplay():
 def pwmDisplay():
     return render_template("index.html", display=2)
     
-@servApp.route('/LEDs')
+@servApp.route('/RGB')
 def ledsDisplay():
     return render_template("index.html", display=3)
-# api.openweathermap.org/data/2.5/weather?id=6077243&appid=5f6f9ed658e35a4409a32bfb0271d32c
 
 ####################################
 # REST API
@@ -184,6 +183,35 @@ def setPWM(objId, value):
 
     return jsonify(error=0, objects=linkedObj[objId])
     
+
+''' Toggle a given RGB object '''
+@servApp.route('/toggleRGB/<int:objId>')
+def toggleRGBObject(objId):
+    global linkedObj
+    
+    if(not str(objId) in linkedObj):
+        return jsonify(error=1)
+        
+    objId = str(objId)
+    
+    linkedObj[objId]['state'] = not linkedObj[objId]['state']
+    if(updateObject(objId) != 0):
+        linkedObj[objId]['state'] = not linkedObj[objId]['state']
+        return jsonify(error=2)
+
+    if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_RGB):
+        if(linkedObj[objId]['state']):
+            internalManager.setPWM(linkedObj[objId]['gpio'][0], linkedObj[objId]['value'][0])
+            internalManager.setPWM(linkedObj[objId]['gpio'][1], linkedObj[objId]['value'][1])
+            internalManager.setPWM(linkedObj[objId]['gpio'][2], linkedObj[objId]['value'][2])
+        else:
+            internalManager.setPWM(linkedObj[objId]['gpio'][0], 0)
+            internalManager.setPWM(linkedObj[objId]['gpio'][1], 0)
+            internalManager.setPWM(linkedObj[objId]['gpio'][2], 0)
+    else:
+        return jsonify(error=3)
+
+    return jsonify(error=0, objects=linkedObj[objId])
 
 ''' Set a given RGB object '''
 @servApp.route('/setRGB/<int:objId>/<int:red>/<int:green>/<int:blue>')
