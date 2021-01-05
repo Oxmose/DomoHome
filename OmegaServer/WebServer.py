@@ -275,7 +275,7 @@ def loadObjects():
             obj = objects[key]
 
             if(obj['type'] == CONSTANTS.OBJ_TYPE_SWITCH or obj['type'] == CONSTANTS.OBJ_TYPE_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_RGB):
-                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': obj['lastState'], 'value': obj['value'], 'gpio': obj['gpio']}
+                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': False, 'value': obj['value'], 'gpio': obj['gpio']}
             else:
                 print("Unkonwn object type " + str(obj['type']))
 
@@ -298,7 +298,6 @@ def updateObject(id):
 
         objects[id]['type'] = currObj['type']
         objects[id]['name'] = currObj['name']
-        objects[id]['lastState'] = currObj['state']
         objects[id]['value'] = currObj['value']
         objects[id]['gpio'] = currObj['gpio']
 

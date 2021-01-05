@@ -23,6 +23,7 @@ class Monitor:
         self.period = period
         self.running = False
         self.thread = threading.Thread(target=self.threadRoutine)
+        self.thread.daemon = True
         
         for i in range(envMemorySize):
             self.envMemory.append(["-1", "-1"])
@@ -63,9 +64,12 @@ class Monitor:
         self.thread.start()
         
     def stop(self):
+        print("Stopping Monitor...")
         if(self.running == True):
             self.running = False
+            self.sensorLock.release()
             self.thread.join()
+            print("Monitor stopped")
         
     def getData(self):
         return self.envMemory, self.envMemoryIndex

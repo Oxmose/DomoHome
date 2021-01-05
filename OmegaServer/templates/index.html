@@ -60,61 +60,47 @@
 <body>
 	<div id="loading_screen"><div class="loader"></div></div>
     <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-        <header class="demo-header mdl-layout__header mdl-color--blue-grey-800 mdl-color-text--grey-100">
+        <header class="demo-header mdl-layout__header mdl-color--blue-grey-1000 mdl-color-text--grey-100">
             <div class="mdl-layout__header-row">
-                <span class="mdl-layout-title" style="margin-left: 10px">DomoHome</span>
+                <span class="mdl-layout-title" style="margin-left: 0px;">DomoHome</span>
             </div>
         </header>
-        <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-100 mdl-color-text--blue-grey-900">
-            <header class="demo-drawer-header">
-                <img style="width:125px; height:125px; margin:auto"
-                    src="{{ url_for('static', filename='images/oxmose.png') }}">
-                <span style="margin: auto">Home | <span id="temp_span_inside_1">21.55&deg;C</span></span>
-            </header>
-
-            <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
-                <a class="mdl-navigation__link" href="dash"><i class="mdl-color-text--blue-grey-400 material-icons"
+        <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-1000">
+            <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-1000">
+                <a class="mdl-navigation__link" href="dash"><i class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">home</i>Dashboard</a>
-                <hr class="mdl-navigation__sep" />
-                <a class="mdl-navigation__link" href="switches"><i class="mdl-color-text--blue-grey-400 material-icons"
+                
+                <a class="mdl-navigation__link" href="switches"><i class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">power</i>Switches</a>
-                <a class="mdl-navigation__link" href="dimmers"><i class="mdl-color-text--blue-grey-400 material-icons"
+                <a class="mdl-navigation__link" href="dimmers"><i class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">slow_motion_video</i>Dimmers</a>
-                <a class="mdl-navigation__link" href="RGB"><i class="mdl-color-text--blue-grey-400 material-icons"
+                <a class="mdl-navigation__link" href="RGB"><i class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">group_work</i>RGB</a>
                 <div class="mdl-layout-spacer"></div>
                 <a class="mdl-navigation__link" href="#" onclick="showSettings()"><i
-                        class="mdl-color-text--blue-grey-400 material-icons"
+                        class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">settings_applications</i><span>Settings</span></a>
                 <a class="mdl-navigation__link" href="#" onclick="showAbout()"><i
-                        class="mdl-color-text--blue-grey-400 material-icons"
+                        class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">help_outline</i><span>About</span></a>
                 <a class="mdl-navigation__link" href="#" onclick="rebootServer()"><i
-                        class="mdl-color-text--blue-grey-400 material-icons"
+                        class="mdl-color-text--blue-grey-100 material-icons"
                         role="presentation">sync</i><span>Reboot</span></a>
             </nav>
         </div>
-        <main class="mdl-layout__content mdl-color--blue-grey-900">
+        <main class="mdl-layout__content mdl-color--blue-grey-1000">
 
             {% if display == 0 %}
-            <div class="demo-card-square mdl-card mdl-shadow--2dp">
+            <div class="demo-card-square mdl-card mdl-shadow--2dp env_data_box">
             	
-			  <div class="mdl-card__supporting-text mdl-card--border">
-			  	<img src="{{ url_for('static', filename='images/intside.png') }}" width="50" style="float:left; margin-right:10px;"/>
-			    Temperature: <span id="temp_span_inside_2">21.55&deg;C</span>
-			    <br />
-			    Humidity: <span id="humidity_span_inside_0">54%</span>
-			    <br />
+			  <div class="mdl-card__supporting-text mdl-card--border mdl-color-text--blue-grey-50">
+			  	<i class="mdl-color-text--blue-grey-100 material-icons" role="presentation">home</i><br />
+			    <span id="temp_span_inside_2">21.55&deg;C</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="humidity_span_inside_0">54%</span>
 			  </div>
 			  
-			  <div class="mdl-card__supporting-text mdl-card--border">
-				<img src="{{ url_for('static', filename='images/outside.png') }}" width="35" style="float:left; margin-right:20px; margin-top: 8px;"/>
-			    Temperature: <span id="temp_span_outside">21.55&deg;C</span>
-			    <br />
-			    Humidity: <span id="humidity_span_outside">54%</span>
-			    <br />
-			    Wind: <span id="wind_span_outside">100Km/H 43&deg;</span>
-			    <br />
+			  <div class="mdl-card__supporting-text mdl-card--border mdl-color-text--blue-grey-50">
+				<i class="mdl-color-text--blue-grey-100 material-icons" role="presentation">wb_cloudy</i><br />
+			    <span id="temp_span_outside">21.55&deg;C</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="humidity_span_outside">54%</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span id="wind_span_outside">100Km/H 43&deg;</span>
 			  </div>
 			  <div class="mdl-card__supporting-text mdl-card--border">
 			    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effectL" style="width:215px; text-align:center" onClick="updateEnv(); updateWeather()">
@@ -127,36 +113,33 @@
 			  
 			</div>
 			
-			<hr class="window_sep"/>
+			<div class="window_sep"></div>
             {% endif %}
            
         	{% if display == 0 or display == 1 %}
         	<div id="switches_block">
 	        	
 			</div>
-			<br /><br />
         	{% endif %}
         	
         	{% if display == 0 %}
-        	<hr class="window_sep"/>
+        	<div class="window_sep"></div>
             {% endif %}
             
             {% if display == 0 or display == 2 %}
         	<div id="pwm_block">
 	        	
 			</div>
-			<br /><br />
         	{% endif %}
         	
         	{% if display == 0 %}
-        	<hr class="window_sep"/>
+        	<div class="window_sep"></div>
             {% endif %}
             
             {% if display == 0 or display == 3 %}
         	<div id="rgb_block">
 	        	
 			</div>
-			<br /><br />
         	{% endif %}
         </main>
         
@@ -215,7 +198,7 @@
                 </p>
             </div>
             <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
-              <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color-text--white close">Close</button>
+              <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white close">Close</button>
             </div>
         </dialog>
         

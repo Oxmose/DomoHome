@@ -72,7 +72,6 @@ function getSettings() {
 
 function getElements() {
     /* Get temperature spans */
-    temperatureSpans.push($('#temp_span_inside_1'));
     temperatureSpans.push($('#temp_span_inside_2'));
     
     humiditySpans.push($('#humidity_span_inside_0'))
@@ -130,7 +129,7 @@ function updateLoopEnv(){
     $.ajax({ 
         url: "/getEnv",
         complete: function(){
-            $("#loading_screen").fadeOut(500);
+            $("#loading_screen").fadeOut(300);
         }
     }).then(function(data) {
         updateEnvUi(data);
@@ -142,6 +141,7 @@ function updateEnv(){
         url: "/getEnv"
     }).then(function(data) {
         updateEnvUi(data);
+        updateWeather();
     });
 }
 
@@ -167,7 +167,7 @@ function updateWeather(){
             	
             tempStr = parseFloat(tempFloat).toFixed(2) + tempUnit;
             humStr = parseFloat(data.main.humidity).toFixed(2) + "%";
-            windStr = parseFloat(data.wind.speed).toFixed(2) + windUnit + " | " + data.wind.deg + "&deg;";
+            windStr = parseFloat(data.wind.speed).toFixed(2) + windUnit + "    " + data.wind.deg + "&deg;";
             
             $('#temp_span_outside').html(tempStr);
             $('#humidity_span_outside').html(humStr);

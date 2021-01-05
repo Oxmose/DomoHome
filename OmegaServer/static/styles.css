@@ -24,11 +24,11 @@ html, body {
 	position: absolute;
 	top: 0;
 	z-index: 10000;
-	background-color: #ecf0f1;
+	background-color: #1e272e;
 }
 
 .loader {
-	border: 16px solid #ecf0f1; /* Light grey */
+  border: 16px solid #ecf0f1; /* Light grey */
   border-right: 16px solid #2980b9;
   border-left: 16px solid #27ae60;
   
@@ -36,10 +36,8 @@ html, body {
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
-  position: absolute;
-  top: 45%;
-  left:45%;
-  
+  margin: auto;
+  margin-top: 100px;
 }
 
 @keyframes spin {
@@ -126,8 +124,8 @@ html, body {
   font-weight: 500;
 }
 .demo-layout .demo-navigation .mdl-navigation__link:hover {
-  background-color: #ecf0f1;
-  color: #34495e;
+  background-color: #1e272e;
+  color: rgba(255, 255, 255, 0.95);
   transition: all 0.5s;
 }
 .demo-navigation .mdl-navigation__link .material-icons {
@@ -242,10 +240,12 @@ _:-ms-input-placeholder, :root .demo-graph {
 }
 
 .window_sep {
-	width: 80%;
-	
+	clear: both;
+	width: 100px;
+	height: 1px;
+	background: #222f3e;
 	margin: auto;
-	margin-top: 20px;
+	margin-top: 10px;
 }
 
 .switch_card {
@@ -256,9 +256,13 @@ _:-ms-input-placeholder, :root .demo-graph {
 	cursor: pointer;
 	overflow: hidden;
 	
-	float: left;
-	margin: 10px !important;
+	padding: 10px;
 	
+	float: left;
+	margin-right: 20px !important;
+	margin-left: 20px !important;
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
 	transition: all 0.5s;
 }
 .switch_card:hover {
@@ -273,34 +277,59 @@ _:-ms-input-placeholder, :root .demo-graph {
 	margin-left: -20px;
 	text-size: 12px;
 	
+	margin-top: -10px;
+	
 	font-weight: bold;
-
 }
 
 
 
 .switch_card_on { 
-	color: #7f8c8d;
-	background-color: #ecf0f1;
+	background-color: #808e9b;
+	border: none;
 }
 
 .switch_card_off {
 	color: #ecf0f1;
-	background-color: #7f8c8d;
+	background: #06090f;
+	border: solid #222f3e 1px;
 }
 
+.switch_card_on .title {
+	color: #06090f;
+}
 .switch_card_off .title {
 	color: #ecf0f1;
-	
 }
 
 .button_group_duo {
-	width:280px;
+	width:320px;
 	margin:auto;
 }
 
 #history_dialog {
-    width: 90%;
+    width: 78%;
     position: absolute !important;
     top: 10px !important;
+}
+
+.mdl-color--blue-grey-1000 {
+	background-color: #0d1117 !important;
+}
+
+.mdl-layout__header {
+	min-height: 50px !important;
+}
+
+.mdl-layout__header-row {
+	height: 50px !important;
+}
+
+.mdl-layout__drawer-button {
+	margin: 0px !important;
+}
+
+.env_data_box {
+	background-color: #06090f;
+	border: solid #222f3e 1px;
 }
