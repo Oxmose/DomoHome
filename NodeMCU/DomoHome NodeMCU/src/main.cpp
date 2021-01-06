@@ -5,7 +5,6 @@
  * 
  * Alexy Torres Aurora Dugo
  */
-
 #include <Arduino.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
