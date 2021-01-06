@@ -1,0 +1,76 @@
+{
+    "0": {
+        "gpio": 15,
+        "type": 1,
+        "name": "Sofa LEDS",
+        "value": 28,
+        "state": true,
+        "node": "local",
+        "addr": "0.0.0.0"
+    },
+    "2": {
+        "gpio": [
+            1,
+            2,
+            3
+        ],
+        "type": 2,
+        "name": "Living Room",
+        "value": 20,
+        "state": false,
+        "node": "local",
+        "addr": "0.0.0.0"
+    },
+    "3": {
+        "gpio": [
+            5,
+            4,
+            6
+        ],
+        "type": 2,
+        "name": "Windows",
+        "value": [
+            6,
+            20,
+            167
+        ],
+        "state": true,
+        "node": "local",
+        "addr": "0.0.0.0"
+    },
+    "4": {
+        "gpio": 5,
+        "type": 0,
+        "name": "TV Node Led",
+        "value": 1,
+        "state": false,
+        "node": "node",
+        "addr": "192.168.0.10"
+    },
+    "5": {
+        "gpio": 4,
+        "type": 1,
+        "name": "TV Front",
+        "value": 30,
+        "state": false,
+        "node": "node",
+        "addr": "192.168.0.10"
+    },
+    "6": {
+        "gpio": [
+            0,
+            2,
+            14
+        ],
+        "type": 2,
+        "name": "TV Back",
+        "value": [
+            0,
+            0,
+            0
+        ],
+        "state": false,
+        "node": "node",
+        "addr": "192.168.0.10"
+    }
+}

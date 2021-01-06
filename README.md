@@ -6,7 +6,7 @@ Domotic web based application. This first version allows to:
 * Manage RGB LED strips
 
 ## Hardware
-* Onion Omega 2+
+* Raspberry Pi 4
 * NodeMCU V3 ESP8266 
 
 ## Languages used

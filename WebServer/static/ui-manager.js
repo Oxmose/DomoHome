@@ -251,8 +251,11 @@ function drawHistory(data) {
 	do{
 	    if(data[0][firstIndex][0] == -1) {
 	        break;
-	    }
-	    lineChartData.labels = prepend(data[0][firstIndex][2], lineChartData.labels);
+        }
+        var d = new Date(data[0][firstIndex][2] * 1000);
+        var dateStr = d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
+
+	    lineChartData.labels = prepend(dateStr, lineChartData.labels);
 	    lineChartData.datasets[0].data = prepend(data[0][firstIndex][0], lineChartData.datasets[0].data);
 	    lineChartData.datasets[1].data = prepend(data[0][firstIndex][1], lineChartData.datasets[1].data);
 	    if(settings.tempUnit != 0) {

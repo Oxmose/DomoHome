@@ -56,7 +56,6 @@ def software_reset(i2c=None, **kwargs):
     """Sends a software reset (SWRST) command to all servo drivers on the bus."""
     # Setup I2C interface for device 0x00 to talk to all of them.
     if i2c is None:
-        from OmegaExpansion import onionI2C
         self.i2c = onionI2C.OnionI2C()
     self.i2c.writeByte(0x06, 0)  # SWRST
 
@@ -69,7 +68,6 @@ class PCA9685(object):
         self.address = address
         # Setup I2C interface for the device.
         if i2c is None:
-            from OmegaExpansion import onionI2C
             self.i2c = onionI2C.OnionI2C()
         self.set_all_pwm(0, 0)
         self.i2c.writeByte(self.address, MODE2, OUTDRV)

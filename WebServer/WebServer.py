@@ -23,7 +23,7 @@ serverSettings = {'tempUnit': CONSTANTS.TEMPERATURE_UNIT_C,
                   'tempSensorGPIO': 18, 
                   'openweatherKey': '5f6f9ed658e35a4409a32bfb0271d32c',
 				  'openweatherId': '6077243',
-				  'envUpdatePeriod': 5,
+				  'envUpdatePeriod': 600,
 				  'envUpdateMemory': 1000,
 }
 
@@ -124,7 +124,7 @@ def toggleObject(objId):
         return jsonify(error=2)
 
     if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_SWITCH):
-        internalManager.setSwitch(linkedObj[objId]['gpio'], linkedObj[objId]['state'])
+        internalManager.setSwitch(linkedObj[objId], linkedObj[objId]['state'])
     else:
         return jsonify(error=3)
 
@@ -147,10 +147,10 @@ def togglePWMObject(objId):
     
     value = linkedObj[objId]['value']
     if(linkedObj[objId]['state'] == False):
-        value = 0;
+        value = 0
 
     if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_PWM):
-        internalManager.setPWM(linkedObj[objId]['gpio'], value)
+        internalManager.setPWM(linkedObj[objId], value)
     else:
         return jsonify(error=3)
 
@@ -166,7 +166,7 @@ def setPWM(objId, value):
         
     objId = str(objId)
     
-    linkedObj[objId]['value'] = value;
+    linkedObj[objId]['value'] = value
     
     if(value == 0):
         linkedObj[objId]['state'] = False
@@ -177,7 +177,7 @@ def setPWM(objId, value):
         return jsonify(error=2)
 
     if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_PWM):
-        internalManager.setPWM(linkedObj[objId]['gpio'], value)
+        internalManager.setPWM(linkedObj[objId], value)
     else:
         return jsonify(error=3)
 
@@ -201,13 +201,18 @@ def toggleRGBObject(objId):
 
     if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_RGB):
         if(linkedObj[objId]['state']):
-            internalManager.setPWM(linkedObj[objId]['gpio'][0], linkedObj[objId]['value'][0])
-            internalManager.setPWM(linkedObj[objId]['gpio'][1], linkedObj[objId]['value'][1])
-            internalManager.setPWM(linkedObj[objId]['gpio'][2], linkedObj[objId]['value'][2])
+            # Transpose to percentage
+            red = linkedObj[objId]['value'][0]
+            green = linkedObj[objId]['value'][1]
+            blue = linkedObj[objId]['value'][2]
+
+            red = red * 100 / 255
+            green = green * 100 / 255
+            blue = blue * 100 / 255
+        
+            internalManager.setRGB(linkedObj[objId], [red, green, blue])
         else:
-            internalManager.setPWM(linkedObj[objId]['gpio'][0], 0)
-            internalManager.setPWM(linkedObj[objId]['gpio'][1], 0)
-            internalManager.setPWM(linkedObj[objId]['gpio'][2], 0)
+            internalManager.setRGB(linkedObj[objId], [0, 0, 0])
     else:
         return jsonify(error=3)
 
@@ -230,7 +235,7 @@ def setRGB(objId, red, green, blue):
     if(blue > 255):
         blue = 255
     
-    linkedObj[objId]['value'] = [red, green, blue];
+    linkedObj[objId]['value'] = [red, green, blue]
     
     totalVal = red + green + blue
     
@@ -244,13 +249,11 @@ def setRGB(objId, red, green, blue):
 
     if(linkedObj[objId]['type'] == CONSTANTS.OBJ_TYPE_RGB):
         # Transpose to percentage
-        red = red * 100 / 255;
-        green = green * 100 / 255;
-        blue = blue * 100 / 255;
+        red = red * 100 / 255
+        green = green * 100 / 255
+        blue = blue * 100 / 255
     
-        internalManager.setPWM(linkedObj[objId]['gpio'][0], red)
-        internalManager.setPWM(linkedObj[objId]['gpio'][1], green)
-        internalManager.setPWM(linkedObj[objId]['gpio'][2], blue)
+        internalManager.setRGB(linkedObj[objId], [red, green, blue])
     else:
         return jsonify(error=3)
 
@@ -275,7 +278,15 @@ def loadObjects():
             obj = objects[key]
 
             if(obj['type'] == CONSTANTS.OBJ_TYPE_SWITCH or obj['type'] == CONSTANTS.OBJ_TYPE_PWM or obj['type'] == CONSTANTS.OBJ_TYPE_RGB):
-                linkedObj[key] = {'type': obj['type'], 'name': obj['name'], 'state': False, 'value': obj['value'], 'gpio': obj['gpio']}
+                linkedObj[key] = {
+                    'type': obj['type'], 
+                    'name': obj['name'], 
+                    'state': obj['state'], 
+                    'value': obj['value'], 
+                    'gpio': obj['gpio'],
+                    'node': obj['node'],
+                    'addr': obj['addr']
+                }
             else:
                 print("Unkonwn object type " + str(obj['type']))
 
@@ -299,6 +310,7 @@ def updateObject(id):
         objects[id]['type'] = currObj['type']
         objects[id]['name'] = currObj['name']
         objects[id]['value'] = currObj['value']
+        objects[id]['state'] = currObj['state']
         objects[id]['gpio'] = currObj['gpio']
 
         f2 = open('objects.json_tmp', 'w')
@@ -325,6 +337,7 @@ def loadSettings():
     try:
         f = open('config.pak', encoding='utf-8')
         serverSettings = json.loads(f.read())
+        f.close()
     except:     
         pass
 
@@ -333,6 +346,7 @@ def saveSettings():
     try:
         f = open('config.pak', 'w')
         json.dump(serverSettings, f, indent=4)
+        f.close()
     except:     
         pass
 	

@@ -3,6 +3,6 @@
     "tempSensorGPIO": 18,
     "openweatherKey": "5f6f9ed658e35a4409a32bfb0271d32c",
     "openweatherId": 6077243,
-    "envUpdatePeriod": 594,
-    "envUpdateMemory": 101
+    "envUpdatePeriod": 600,
+    "envUpdateMemory": 500
 }

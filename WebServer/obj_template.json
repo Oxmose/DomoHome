@@ -1,0 +1,41 @@
+{
+    "0": {
+        "gpio": 15,
+        "type": 1,
+        "name": "Sofa LEDS",
+        "value": 88,
+        "state": true,
+        "node": "local",
+        "addr": "0.0.0.0"
+    },
+    "2": {
+        "gpio": [
+            1,
+            2,
+            3
+        ],
+        "type": 2,
+        "name": "Living Room",
+        "value": 20,
+        "state": false,
+        "node": "local",
+        "addr": "0.0.0.0"
+    },
+    "3": {
+        "gpio": [
+            5,
+            4,
+            6
+        ],
+        "type": 2,
+        "name": "Windows",
+        "value": [
+            6,
+            15,
+            167
+        ],
+        "state": false,
+        "node": "local",
+        "addr": "0.0.0.0"
+    }
+}
