@@ -1,0 +1,13 @@
+{
+    "users": {
+        "alexy": {
+            "reg_time": 1649275456,
+            "password": "df5f954dcf29f876142599e685907f5a9ff5b9dd00db62736c778bf4e299d79b",
+            "level": 0,
+            "email": "alexy.torresa@gmail.com"
+        }
+    },
+    "emails": {
+        "alexy.torresa@gmail.com": "alexy"
+    }
+}

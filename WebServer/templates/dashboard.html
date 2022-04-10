@@ -1,0 +1,49 @@
+{% extends "interface_base.html" %}
+
+{% block main %}
+
+<div class="dashboard_row">
+    <div class="card sticky-action small">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">Weather and Home</span>
+            <br />
+            <div>
+                <i class="material-icons left">deck</i><span class="grey-text text-darken-4">Weather</span>
+            </div>
+            <br />
+            <div>
+                <i class="material-icons left">home</i><span>Home</span>
+            </div>
+        </div>
+        <div class="card-action">
+            <a href="/updateWandH">Update</a>
+            <a href="#">History</a>
+        </div>
+    </div>
+
+    <div class="card sticky-action small">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">NAS Status</span>
+            <br />
+            <div>
+                <i class="material-icons left">insert_link</i><span class="grey-text text-darken-4">Current status: <span class="teal-text">enabled</span></span>
+            </div>
+            <br />
+            <div>
+                <i class="material-icons left">dns</i><span class="grey-text text-darken-4">IP Address: 888.888.888.888</span>
+            </div>
+            <br />
+            <div>
+                <i class="material-icons left">folder_open</i><span class="grey-text text-darken-4">Disk usage: 780Gb / 1.8Tb</span>
+                <div class="progress disk_space">
+                    <div class="determinate disk_space" style="width: 70%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card-action">
+            <a href="#">Access NAS</a>
+            <a href="#">Turn OFF NAS</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

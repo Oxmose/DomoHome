@@ -1,0 +1,102 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+    <title>DomoHome</title>
+    <meta name="description" content="DomoHome General purpose management interface">
+    <meta name="author" content="Alexy Torres">
+
+    <meta property="og:title" content="DomoHome General purpose management interface">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="DomoHome General purpose management interface">
+
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <div id="top_menu_bar">
+            <div id="weather_widget">
+                <div id="weather_widget_global">
+                    <img id="weather_widget_icon" src="{{ url_for('static', filename='images/weather/nicepack/placeholder.png') }}"/>
+                    <div id="weather_widget_temp">
+                        <span id="weather_widget_temp_value">22.5°C</span><br />
+                        <span id="weather_widget_temp_minmax">
+                            <i class="material-icons">expand_less</i>
+                            <span id="weather_widget_temp_max">55.5°C</span>
+                            <i class="material-icons">expand_more</i>
+                            <span id="weather_widget_temp_min">-55.5°C</span>
+                        </span>
+                    </div>
+                </div>
+                <div id="weather_widget_more">
+                    <p class="weather_widget_more_block"><img id="weather_widget_rain_icon" src="{{ url_for('static', filename='images/weather/nicepack/placeholder_rain.png') }}"/><span id="weather_widget_rain_risk">100%</span></p>
+                    <p class="weather_widget_more_block"><img id="weather_widget_wind_icon" src="{{ url_for('static', filename='images/weather/nicepack/placeholder_wind.png') }}"/><span id="weather_widget_wind_info">155.5Km/h 145°</span></p>
+                </div>
+            </div>
+            <div class="top_menu_bar_sep"></div>
+            <div id="home_menu_widget">
+                <a href="/dash"><i class="material-icons">grid_view</i></a>
+            </div>
+            <div id="account_widget">
+                <ul id="account_widget_dropdown" class="dropdown-content">
+                    <li><a href="/profile"><i class="material-icons">account_circle</i>Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a class="modal-trigger" href="/settings"><i class="material-icons">settings</i>Settings</a></li>
+                    <li><a class="modal-trigger" href="#modal_about"><i class="material-icons">contact_support</i>About</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/logout" style="color: #e74c3c !important;"><i class="material-icons">logout</i>Logout</a></li>
+                </ul>
+                <a class="dropdown-trigger" href="#!" data-target="account_widget_dropdown">
+                    <img id="account_widget_avatar" src="{{ url_for('static', filename='images/welcome_logo.jpg') }}"/>
+                </a>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block main %}
+        {% endblock %}
+    </main>
+    <footer>
+
+    </footer>
+
+     <!-- Modal Structure -->
+    <div id="modal_about" class="modal bottom-sheet">
+        <div class="modal-content">
+            <h4>About</h4>
+            <p>Domohome &copy; Alexy Torres 2022<br /><br />
+                Domohome is a domotic application aimed at managing connected objects in the house.<br /><br />
+                <a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- JS loading -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="{{ url_for('static', filename='global.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
+<script>
+    /* On document ready */
+    $( document ).ready(function() {
+        /* Initialize the dropdown menus */
+        $(".dropdown-trigger").dropdown();
+        /* Initialize the modal boxes */
+        $('.modal').modal();
+    });
+</script>
+
+</html>
