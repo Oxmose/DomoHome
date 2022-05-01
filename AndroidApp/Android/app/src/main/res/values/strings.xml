@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">DomoHome</string>
+    <string name="settings_wheel">Settings Wheel</string>
+    <string name="server_s_ip_address">Server\'s IP address</string>
+    <string name="server_s_api_key">Server\'s API key</string>
+    <string name="send_settings_to_watch">Send settings to watch</string>
+    <string name="textview">TextView</string>
+    <string name="swipe_down_list_to_refresh">Swipe down list to refresh</string>
+</resources>

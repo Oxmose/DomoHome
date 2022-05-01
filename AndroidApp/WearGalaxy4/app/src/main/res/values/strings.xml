@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">DomoHome</string>
+    <string name="temp_placeholder_text">88.88°C</string>
+    <string name="temp_formated_text">%1$s°C</string>
+    <string name="percent_placeholder_text">88.88%</string>
+    <string name="hum_formated_text">%1$s\%%</string>
+    <string name="light_formated_text">%1$s\%%</string>
+    <string name="light_sensor_icon_description">Light Sensor Icon</string>
+    <string name="humidity_sensor_icon_description">Humidity Sensor Icon</string>
+    <string name="temperature_sensor_icon_description">Temperature Sensor Icon</string>
+    <string name="environment_data">Environment Data</string>
+    <string name="nas_status">NAS Status</string>
+    <string name="current_status">Current status:</string>
+    <string name="ftp">FTP</string>
+    <string name="ip_address_formated">IP %1$s</string>
+    <string name="ip_address_placeholder">IP 888.888.888.888</string>
+    <string name="samba">SAMBA</string>
+    <string name="nas_usage_formated">%1$s%2$s/%3$s%4$s</string>
+    <string name="ftp_enabled_check_mark">FTP enabled check mark</string>
+    <string name="samba_enabled_check_mark">SAMBA enabled check mark</string>
+    <string name="server_s_ip_address">Server\'s IP address</string>
+    <string name="server_s_disk_usage">Server\'s disk usage</string>
+    <string name="nas_udage_placeholder">8.88TB / 8.88TB</string>
+    <string name="setup_message">Please open the application on your phone and setup the server\'s information. \n\nThis message will disappear once the information are correctly entered.</string>
+    <string name="settings_wheel">Settings Wheel</string>
+    <string name="settings_button">Settings Button</string>
+
+</resources>
