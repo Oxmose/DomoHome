@@ -4,46 +4,94 @@
 
 <div class="dashboard_row">
     <div class="card sticky-action small">
-        <div class="card-content">
-            <span class="card-title activator grey-text text-darken-4">Weather and Home</span>
-            <br />
+        <div class="card-content" id="card_environment">
+            <span class="card-title activator grey-text text-darken-4">Environment Data</span>
             <div>
-                <i class="material-icons left">deck</i><span class="grey-text text-darken-4">Weather</span>
+                <i class="material-icons left">thermostat</i><span class="icon_label" id="card_env_temp">100.5°C</span>
+                <div class="dash_chart_container">
+                    <canvas id="temp_chart"></canvas>
+                </div>
             </div>
-            <br />
+            <br /><br />
             <div>
-                <i class="material-icons left">home</i><span>Home</span>
+                <i class="material-icons left">water_drop</i><span class="icon_label" id="card_env_humidity">50.5%</span>
+                <div class="dash_chart_container">
+                    <canvas id="hum_chart"></canvas>
+                </div>
             </div>
-        </div>
-        <div class="card-action">
-            <a href="/updateWandH">Update</a>
-            <a href="#">History</a>
-        </div>
-    </div>
-
-    <div class="card sticky-action small">
-        <div class="card-content">
-            <span class="card-title activator grey-text text-darken-4">NAS Status</span>
-            <br />
+            <br /><br />
             <div>
-                <i class="material-icons left">insert_link</i><span class="grey-text text-darken-4">Current status: <span class="teal-text">enabled</span></span>
-            </div>
-            <br />
-            <div>
-                <i class="material-icons left">dns</i><span class="grey-text text-darken-4">IP Address: 888.888.888.888</span>
-            </div>
-            <br />
-            <div>
-                <i class="material-icons left">folder_open</i><span class="grey-text text-darken-4">Disk usage: 780Gb / 1.8Tb</span>
-                <div class="progress disk_space">
-                    <div class="determinate disk_space" style="width: 70%"></div>
+                <i class="material-icons left">light_mode</i><span class="icon_label" id="card_env_lum">100%</span>
+                <div class="dash_chart_container">
+                    <canvas id="lum_chart"></canvas>
                 </div>
             </div>
         </div>
         <div class="card-action">
-            <a href="#">Access NAS</a>
-            <a href="#">Turn OFF NAS</a>
+            <a href="#" onclick="forceUpdateEnvironment()">Update</a>
+            <a href="/history">History</a>
+        </div>
+    </div>
+
+    <div class="card sticky-action small" style="height: 380px">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">NAS Status</span>
+            <br />
+            <div>
+                <i class="material-icons left">insert_link</i>
+                <span class="grey-text text-darken-4">Current status: &nbsp;&nbsp;</span>
+                <span class="grey-text text-darken-4" id="ftp_status">
+                    FTP&nbsp;
+                    <i class="material-icons" style="font-size:14px;">help</i>
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <span class="grey-text text-darken-4" id="smbd_status">
+                    SAMBA&nbsp;
+                    <i class="material-icons" style="font-size:14px;">help</i>
+                </span>
+            </div>
+            <br />
+            <div>
+                <i class="material-icons left">dns</i><span class="grey-text text-darken-4">IP Address: {{ request.host.split(':')[0] }}</span>
+            </div>
+            <br />
+            <div>
+                <i class="material-icons left">folder_open</i><span class="grey-text text-darken-4">Disk usage: {{ diskUsed }}{{ diskUsedUnit }} / {{ diskTotal }}{{ diskTotalUnit }}</span>
+                <div class="progress disk_space">
+                    <div class="determinate disk_space" style="width: {{diskPercent}}%"></div>
+                </div>
+            </div>
+            <div class="progress" id="nas_status_update_progress">
+                <div class="indeterminate"></div>
+            </div>
+            <div>
+                <i class="material-icons left">webhook</i>
+                <span class="grey-text text-darken-4">API Key:  {{ serverApiKey }}</span>
+            </div>
+
+        </div>
+        <div class="card-action">
+            <a href="#" id="button_toggle_ftp" onclick="toggleFTP()"></a>
+            <a href="#" id="button_toggle_smbd" onclick="toggleSMBD()"></a>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script_include %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block script_onready %}
+/* Update services status */
+getNASStatus();
+
+/* First update of the environment */
+updateEnvironment();
+
+/* Load all charts */
+loadEnvChart();
+{% endblock %}
+
+{% block script_end %}
 {% endblock %}

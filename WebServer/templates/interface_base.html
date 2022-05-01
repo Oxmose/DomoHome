@@ -47,15 +47,13 @@
             </div>
             <div class="top_menu_bar_sep"></div>
             <div id="home_menu_widget">
-                <a href="/dash"><i class="material-icons">grid_view</i></a>
+                <a href="/dash"><i class="material-icons">donut_large</i></a>
             </div>
             <div id="account_widget">
                 <ul id="account_widget_dropdown" class="dropdown-content">
-                    <li><a href="/profile"><i class="material-icons">account_circle</i>Profile</a></li>
-                    <li class="divider"></li>
-                    <li><a class="modal-trigger" href="/settings"><i class="material-icons">settings</i>Settings</a></li>
                     <li><a class="modal-trigger" href="#modal_about"><i class="material-icons">contact_support</i>About</a></li>
                     <li class="divider"></li>
+                    <li><a class="modal-trigger" href="#modal_reboot" style="color: #e74c3c !important;"><i class="material-icons">restart_alt</i>Reboot RPi</a></li>
                     <li><a href="/logout" style="color: #e74c3c !important;"><i class="material-icons">logout</i>Logout</a></li>
                 </ul>
                 <a class="dropdown-trigger" href="#!" data-target="account_widget_dropdown">
@@ -78,8 +76,19 @@
             <h4>About</h4>
             <p>Domohome &copy; Alexy Torres 2022<br /><br />
                 Domohome is a domotic application aimed at managing connected objects in the house.<br /><br />
-                <a target=\"_blank\" href=\"https://github.com/Oxmose/DomoHome\">Github page</a>
+                <a target="_blank" href="https://github.com/Oxmose/DomoHome">Github page</a>
             </p>
+        </div>
+    </div>
+
+    <div id="modal_reboot" class="modal">
+        <div class="modal-content">
+            <h4>Reboot RPi ?</h4>
+            <p>Do you really want to reboot RPi?</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Reboot</a>
+            <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancel</a>
         </div>
     </div>
 
@@ -87,6 +96,8 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="{{ url_for('static', filename='global.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    {% block script_include %}
+    {% endblock %}
 </body>
 
 <script>
@@ -96,7 +107,17 @@
         $(".dropdown-trigger").dropdown();
         /* Initialize the modal boxes */
         $('.modal').modal();
+        /* Get the settings */
+        setSettings("{{ weatherApiKey }}", "{{ serverApiKey }}");
+        /* Update weather */
+        updateWeather();
+
+        {% block script_onready %}
+        {% endblock %}
     });
+
+    {% block script_end %}
+    {% endblock %}
 </script>
 
 </html>

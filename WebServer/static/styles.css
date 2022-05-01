@@ -168,14 +168,15 @@ body {
 
 #weather_widget {
   float:left;
-  width: 300px;
+  width: 280px;
 }
 
 #weather_widget_icon {
-  width: 40px;
-  height: 40px;
-  margin: 5px;
+  width: 50px;
+  height: 50px;
+  margin: 0px;
   float: left;
+  margin-right: -5px;
 }
 
 #weather_widget p {
@@ -189,10 +190,10 @@ body {
 #weather_widget_temp {
   font-size: 14px !important;
   padding-top: 3px !important;
-  padding-right: 15px;
+  padding-right: 5px;
   color:#eceff1;
   display: block;
-  width: 180px;
+  width: 160px;
   text-align: center;
 }
 
@@ -240,7 +241,6 @@ body {
   margin-top: 5px;
   background-color: #263238;
   display: inline-block;
-  margin-left: 10px;
 }
 
 #account_widget {
@@ -301,22 +301,21 @@ body {
   height: 50px;
   position: absolute;
   top: 0px;
-  left: 320px;
+  left: 290px;
   margin: auto;
   overflow: hidden;
-  border-radius: 50px;
 }
 
 #home_menu_widget a, #home_menu_widget .material-icons{
-  color:#bebebe !important;
+  color:#ffffff !important;
   font-size: 40px;
   transition: all 0.5s;
-  border-radius: 50px;
   overflow: hidden;
+  font-weight: 100 !important;
 }
 
 #home_menu_widget i:hover{
-  color:#ffffff !important;
+  color:#bebebe !important;
   transition: all 0.5s;
 }
 
@@ -332,3 +331,33 @@ body {
 .disk_space {
   height: 15px;
 }
+
+#card_environment .icon_label {
+  position: relative;
+  top: 2px;
+}
+
+.dash_chart_container {
+  float: right;
+  width: 250px;
+  height: 40px;
+  margin-top: -12px;
+  /*border: solid 1px black;*/
+}
+
+/***********************************************************************************************************************
+ * HISTORY
+ **********************************************************************************************************************/
+
+ .history_row .card {
+  width: 700px;
+  height: 580px;
+  margin: 25px auto 25px auto;
+}
+
+.history_chart_container {
+  width: 655px;
+  height: 300px;
+  margin-top: 5px;
+}
+

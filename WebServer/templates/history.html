@@ -1,0 +1,81 @@
+{% extends "interface_base.html" %}
+
+{% block main %}
+
+<div class="history_row">
+    <div class="card sticky-action small">
+        <div class="card-content" id="card_environment">
+            <span class="card-title activator grey-text text-darken-4">24H History &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <i class="material-icons" style="color: #3498db">thermostat</i> &nbsp; <i class="material-icons" style="color: #16a085">water_drop</i> &nbsp; <i class="material-icons" style="color:#ff6384">light_mode</i> </span>
+            <div class="history_chart_container">
+                <canvas id="temp_chart_24h"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="hum_chart_24h"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="lum_chart_24h"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card sticky-action small">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">7 Days History &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <i class="material-icons" style="color: #3498db">thermostat</i> &nbsp; <i class="material-icons" style="color: #16a085">water_drop</i> &nbsp; <i class="material-icons" style="color:#ff6384">light_mode</i> </span>
+            <div class="history_chart_container">
+                <canvas id="temp_chart_7d"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="hum_chart_7d"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="lum_chart_7d"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card sticky-action small">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">1 Month History &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <i class="material-icons" style="color: #3498db">thermostat</i> &nbsp; <i class="material-icons" style="color: #16a085">water_drop</i> &nbsp; <i class="material-icons" style="color:#ff6384">light_mode</i> </span>
+            <div class="history_chart_container">
+                <canvas id="temp_chart_1m"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="hum_chart_1m"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="lum_chart_1m"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card sticky-action small">
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">1 Year History &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; <i class="material-icons" style="color: #3498db">thermostat</i> &nbsp; <i class="material-icons" style="color: #16a085">water_drop</i> &nbsp; <i class="material-icons" style="color:#ff6384">light_mode</i> </span>
+            <div class="history_chart_container">
+                <canvas id="temp_chart_1y"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="hum_chart_1y"></canvas>
+            </div>
+            <div class="history_chart_container">
+                <canvas id="lum_chart_1y"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script_include %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block script_onready %}
+/* Load charts */
+load24HHist();
+load7DHist();
+load1MHist();
+load1YHist();
+{% endblock %}
+
+{% block script_end %}
+{% endblock %}
